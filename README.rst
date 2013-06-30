@@ -36,7 +36,7 @@ Reaching out
 We'd love to hear from you if you like |po|, want a new feature, find a bug,
 need help using it, or just have a word of encouragement.
 
-The **mailing list** for |pp| is (google groups ... )
+The **mailing list** for |po| is (google groups ... )
 
 The **issue tracker** is on github at `python-openxml/python-opc`_.
 
@@ -89,4 +89,4 @@ remove my name from the credits. See the LICENSE file for specific terms.
 .. _MIT license:
    http://www.opensource.org/licenses/mit-license.php
 
-.. |p0| replace:: ``python-opc``
+.. |po| replace:: ``python-opc``
