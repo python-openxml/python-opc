@@ -5,6 +5,7 @@ python-opc
 Contents:
 
 .. toctree::
+   developer/design_narratives
    :maxdepth: 2
 
 Notes
