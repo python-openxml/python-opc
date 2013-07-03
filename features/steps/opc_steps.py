@@ -22,11 +22,19 @@ def absjoin(*paths):
     return os.path.abspath(os.path.join(*paths))
 
 thisdir = os.path.split(__file__)[0]
+scratch_dir = absjoin(thisdir, '../_scratch')
 test_file_dir = absjoin(thisdir, '../../tests/test_files')
 basic_pptx_path = absjoin(test_file_dir, 'test.pptx')
+saved_pptx_path = absjoin(scratch_dir, 'test_out.pptx')
 
 
 # given ====================================================
+
+@given('a clean working directory')
+def step_given_clean_working_dir(context):
+    if os.path.isfile(saved_pptx_path):
+        os.remove(saved_pptx_path)
+
 
 @given('a python-opc working environment')
 def step_given_python_opc_working_environment(context):
@@ -38,6 +46,13 @@ def step_given_python_opc_working_environment(context):
 @when('I open a PowerPoint file')
 def step_when_open_basic_pptx(context):
     context.pkg = OpcPackage.open(basic_pptx_path)
+
+
+@when('I save the presentation package')
+def step_when_save_presentation_package(context):
+    if os.path.isfile(saved_pptx_path):
+        os.remove(saved_pptx_path)
+    context.pkg.save(saved_pptx_path)
 
 
 # then =====================================================

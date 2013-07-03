@@ -3,7 +3,6 @@ Feature: Open an OPC package
   As an Open XML developer
   I need to open an arbitrary package
 
-  @wip
   Scenario: Open a PowerPoint file
      Given a python-opc working environment
       When I open a PowerPoint file
