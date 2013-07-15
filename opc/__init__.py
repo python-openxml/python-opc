@@ -7,4 +7,6 @@
 # This module is part of python-opc and is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
 
+from opc.package import OpcPackage  # noqa
+
 __version__ = '0.0.1d1'
