@@ -51,3 +51,23 @@ class Unmarshaller(object):
         contents of *pkg_reader*, delegating construction of each part to
         *part_factory*. Package relationships are added to *pkg*.
         """
+        parts = Unmarshaller._unmarshal_parts(pkg_reader, part_factory)
+        Unmarshaller._unmarshal_relationships(pkg_reader, pkg, parts)
+        for part in parts.values():
+            part._after_unmarshal()
+
+    @staticmethod
+    def _unmarshal_parts(pkg_reader, part_factory):
+        """
+        Return a dictionary of |Part| instances unmarshalled from
+        *pkg_reader*, keyed by partname. Side-effect is that each part in
+        *pkg_reader* is constructed using *part_factory*.
+        """
+
+    @staticmethod
+    def _unmarshal_relationships(pkg_reader, pkg, parts):
+        """
+        Add a relationship to the source object corresponding to each of the
+        relationships in *pkg_reader* with its target_part set to the actual
+        target part in *parts*.
+        """

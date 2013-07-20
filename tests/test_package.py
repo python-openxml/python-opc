@@ -13,9 +13,9 @@ import pytest
 
 from mock import Mock
 
-from opc.package import OpcPackage
+from opc.package import OpcPackage, Unmarshaller
 
-from .unitutil import class_mock
+from .unitutil import class_mock, method_mock
 
 
 class DescribeOpcPackage(object):
@@ -44,3 +44,31 @@ class DescribeOpcPackage(object):
         Unmarshaller_.unmarshal.assert_called_once_with(pkg_reader, pkg,
                                                         PartFactory_)
         assert isinstance(pkg, OpcPackage)
+
+
+class DescribeUnmarshaller(object):
+
+    @pytest.fixture
+    def _unmarshal_parts(self, request):
+        return method_mock(Unmarshaller, '_unmarshal_parts', request)
+
+    @pytest.fixture
+    def _unmarshal_relationships(self, request):
+        return method_mock(Unmarshaller, '_unmarshal_relationships', request)
+
+    def it_can_unmarshal_from_a_pkg_reader(self, _unmarshal_parts,
+                                           _unmarshal_relationships):
+        # mockery ----------------------
+        pkg = Mock(name='pkg')
+        pkg_reader = Mock(name='pkg_reader')
+        part_factory = Mock(name='part_factory')
+        parts = {1: Mock(name='part_1'), 2: Mock(name='part_2')}
+        _unmarshal_parts.return_value = parts
+        # exercise ---------------------
+        Unmarshaller.unmarshal(pkg_reader, pkg, part_factory)
+        # verify -----------------------
+        _unmarshal_parts.assert_called_once_with(pkg_reader, part_factory)
+        _unmarshal_relationships.assert_called_once_with(pkg_reader, pkg,
+                                                         parts)
+        for part in parts.values():
+            part._after_unmarshal.assert_called_once_with()
