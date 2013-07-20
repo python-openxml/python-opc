@@ -11,7 +11,7 @@
 
 import pytest
 
-from mock import Mock
+from mock import call, Mock
 
 from opc.package import OpcPackage, Unmarshaller
 
@@ -72,3 +72,25 @@ class DescribeUnmarshaller(object):
                                                          parts)
         for part in parts.values():
             part._after_unmarshal.assert_called_once_with()
+
+    def it_can_unmarshal_parts(self):
+        # test data --------------------
+        part_properties = (
+            ('/part/name1.xml', 'app/vnd.contentType_A', '<Part_1/>'),
+            ('/part/name2.xml', 'app/vnd.contentType_B', '<Part_2/>'),
+            ('/part/name3.xml', 'app/vnd.contentType_C', '<Part_3/>'),
+        )
+        # mockery ----------------------
+        pkg_reader = Mock(name='pkg_reader')
+        pkg_reader.iter_sparts.return_value = part_properties
+        part_factory = Mock(name='part_factory')
+        parts = [Mock(name='part1'), Mock(name='part2'), Mock(name='part3')]
+        part_factory.side_effect = parts
+        # exercise ---------------------
+        retval = Unmarshaller._unmarshal_parts(pkg_reader, part_factory)
+        # verify -----------------------
+        expected_calls = [call(*p) for p in part_properties]
+        expected_parts = dict((p[0], parts[idx]) for (idx, p) in
+                              enumerate(part_properties))
+        assert part_factory.call_args_list == expected_calls
+        assert retval == expected_parts

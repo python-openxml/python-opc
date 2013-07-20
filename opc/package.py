@@ -63,6 +63,10 @@ class Unmarshaller(object):
         *pkg_reader*, keyed by partname. Side-effect is that each part in
         *pkg_reader* is constructed using *part_factory*.
         """
+        parts = {}
+        for partname, content_type, blob in pkg_reader.iter_sparts():
+            parts[partname] = part_factory(partname, content_type, blob)
+        return parts
 
     @staticmethod
     def _unmarshal_relationships(pkg_reader, pkg, parts):
