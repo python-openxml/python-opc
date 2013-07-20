@@ -24,3 +24,16 @@ class ZipPkgReader(object):
     """
     Implements |PhysPkgReader| interface for a zip file OPC package.
     """
+    def __init__(self, pkg_file):
+        super(ZipPkgReader, self).__init__()
+
+    def close(self):
+        """
+        Close the zip archive, releasing any resources it is using.
+        """
+
+    @property
+    def content_types_xml(self):
+        """
+        Return the `[Content_Types].xml` blob from the zip package.
+        """
