@@ -206,6 +206,32 @@ class Describe_SerializedRelationship(object):
             srel = _SerializedRelationship(None, rel_elm)
             assert srel.is_external is expected_value
 
+    def it_can_calculate_its_target_partname(self):
+        # test data --------------------
+        cases = (
+            ('/', 'docProps/core.xml', '/docProps/core.xml'),
+            ('/ppt', 'viewProps.xml', '/ppt/viewProps.xml'),
+            ('/ppt/slides', '../slideLayouts/slideLayout1.xml',
+             '/ppt/slideLayouts/slideLayout1.xml'),
+        )
+        for baseURI, target_ref, expected_partname in cases:
+            # setup --------------------
+            rel_elm = Mock(name='rel_elm', rId=None, reltype=None,
+                           target_ref=target_ref, target_mode=RTM.INTERNAL)
+            # exercise -----------------
+            srel = _SerializedRelationship(baseURI, rel_elm)
+            # verify -------------------
+            assert srel.target_partname == expected_partname
+
+    def it_raises_on_target_partname_when_external(self):
+        rel_elm = Mock(
+            name='rel_elm', rId='rId9', reltype='ReLtYpE',
+            target_ref='docProps/core.xml', target_mode=RTM.EXTERNAL
+        )
+        srel = _SerializedRelationship('/', rel_elm)
+        with pytest.raises(ValueError):
+            srel.target_partname
+
 
 class Describe_SerializedRelationshipCollection(object):
 

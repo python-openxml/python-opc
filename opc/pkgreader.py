@@ -14,7 +14,7 @@ Provides a low-level, read-only API to a serialized Open Packaging Convention
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from opc.oxml import oxml_fromstring
-from opc.packuri import PACKAGE_URI
+from opc.packuri import PACKAGE_URI, PackURI
 from opc.phys_pkg import PhysPkgReader
 
 
@@ -126,6 +126,7 @@ class _SerializedRelationship(object):
     """
     def __init__(self, baseURI, rel_elm):
         super(_SerializedRelationship, self).__init__()
+        self._baseURI = baseURI
         self._rId = rel_elm.rId
         self._reltype = rel_elm.reltype
         self._target_mode = rel_elm.target_mode
@@ -167,6 +168,23 @@ class _SerializedRelationship(object):
         e.g. an HTTP URL, for external target mode.
         """
         return self._target_ref
+
+    @property
+    def target_partname(self):
+        """
+        |PackURI| instance containing partname targeted by this relationship.
+        Raises ``ValueError`` on reference if target_mode is ``'External'``.
+        Use :attr:`target_mode` to check before referencing.
+        """
+        if self.is_external:
+            msg = ('target_partname attribute on Relationship is undefined w'
+                   'here TargetMode == "External"')
+            raise ValueError(msg)
+        # lazy-load _target_partname attribute
+        if not hasattr(self, '_target_partname'):
+            self._target_partname = PackURI.from_rel_ref(self._baseURI,
+                                                         self.target_ref)
+        return self._target_partname
 
 
 class _SerializedRelationshipCollection(object):
