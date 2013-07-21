@@ -13,9 +13,11 @@ import pytest
 
 from mock import call, Mock, patch
 
+from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from opc.phys_pkg import ZipPkgReader
 from opc.pkgreader import (
-    _ContentTypeMap, PackageReader, _SerializedRelationshipCollection
+    _ContentTypeMap, PackageReader, _SerializedRelationship,
+    _SerializedRelationshipCollection
 )
 
 from .unitutil import class_mock, initializer_mock, method_mock
@@ -177,6 +179,32 @@ class DescribePackageReader(object):
         phys_reader.rels_xml_for.assert_called_once_with(source_uri)
         load_from_xml.assert_called_once_with(source_uri.baseURI, rels_xml)
         assert retval == srels
+
+
+class Describe_SerializedRelationship(object):
+
+    def it_remembers_construction_values(self):
+        # test data --------------------
+        rel_elm = Mock(
+            name='rel_elm', rId='rId9', reltype='ReLtYpE',
+            target_ref='docProps/core.xml', target_mode=RTM.INTERNAL
+        )
+        # exercise ---------------------
+        srel = _SerializedRelationship('/', rel_elm)
+        # verify -----------------------
+        assert srel.rId == 'rId9'
+        assert srel.reltype == 'ReLtYpE'
+        assert srel.target_ref == 'docProps/core.xml'
+        assert srel.target_mode == RTM.INTERNAL
+
+    def it_knows_when_it_is_external(self):
+        cases = (RTM.INTERNAL, RTM.EXTERNAL, 'FOOBAR')
+        expected_values = (False, True, False)
+        for target_mode, expected_value in zip(cases, expected_values):
+            rel_elm = Mock(name='rel_elm', rId=None, reltype=None,
+                           target_ref=None, target_mode=target_mode)
+            srel = _SerializedRelationship(None, rel_elm)
+            assert srel.is_external is expected_value
 
 
 class Describe_SerializedRelationshipCollection(object):

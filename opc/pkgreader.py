@@ -12,6 +12,7 @@ Provides a low-level, read-only API to a serialized Open Packaging Convention
 (OPC) package.
 """
 
+from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from opc.oxml import oxml_fromstring
 from opc.packuri import PACKAGE_URI
 from opc.phys_pkg import PhysPkgReader
@@ -123,6 +124,49 @@ class _SerializedRelationship(object):
     Serialized, in this case, means any target part is referred to via its
     partname rather than a direct link to an in-memory |Part| object.
     """
+    def __init__(self, baseURI, rel_elm):
+        super(_SerializedRelationship, self).__init__()
+        self._rId = rel_elm.rId
+        self._reltype = rel_elm.reltype
+        self._target_mode = rel_elm.target_mode
+        self._target_ref = rel_elm.target_ref
+
+    @property
+    def is_external(self):
+        """
+        True if target_mode is ``RTM.EXTERNAL``
+        """
+        return self._target_mode == RTM.EXTERNAL
+
+    @property
+    def reltype(self):
+        """Relationship type, like ``RT.OFFICE_DOCUMENT``"""
+        return self._reltype
+
+    @property
+    def rId(self):
+        """
+        Relationship id, like 'rId9', corresponds to the ``Id`` attribute on
+        the ``CT_Relationship`` element.
+        """
+        return self._rId
+
+    @property
+    def target_mode(self):
+        """
+        String in ``TargetMode`` attribute of ``CT_Relationship`` element,
+        one of ``RTM.INTERNAL`` or ``RTM.EXTERNAL``.
+        """
+        return self._target_mode
+
+    @property
+    def target_ref(self):
+        """
+        String in ``Target`` attribute of ``CT_Relationship`` element, a
+        relative part reference for internal target mode or an arbitrary URI,
+        e.g. an HTTP URL, for external target mode.
+        """
+        return self._target_ref
 
 
 class _SerializedRelationshipCollection(object):
