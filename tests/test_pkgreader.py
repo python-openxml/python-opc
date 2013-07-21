@@ -238,3 +238,12 @@ class Describe_SerializedRelationshipCollection(object):
         oxml_fromstring.assert_called_once_with(rels_item_xml)
         assert _SerializedRelationship_.call_args_list == expected_calls
         assert isinstance(srels, _SerializedRelationshipCollection)
+
+    def it_should_be_iterable(self):
+        srels = _SerializedRelationshipCollection()
+        try:
+            for x in srels:
+                pass
+        except TypeError:
+            msg = "_SerializedRelationshipCollection object is not iterable"
+            pytest.fail(msg)

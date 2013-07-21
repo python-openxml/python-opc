@@ -178,6 +178,10 @@ class _SerializedRelationshipCollection(object):
         super(_SerializedRelationshipCollection, self).__init__()
         self._srels = []
 
+    def __iter__(self):
+        """Support iteration, e.g. 'for x in srels:'"""
+        return self._srels.__iter__()
+
     @staticmethod
     def load_from_xml(baseURI, rels_item_xml):
         """
