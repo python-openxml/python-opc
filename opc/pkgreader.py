@@ -53,12 +53,26 @@ class PackageReader(object):
         parts in *phys_reader* accessible by walking the relationship graph
         starting with *pkg_srels*.
         """
+        sparts = []
+        part_walker = PackageReader._walk_phys_parts(phys_reader, pkg_srels)
+        for partname, blob, srels in part_walker:
+            content_type = content_types[partname]
+            spart = _SerializedPart(partname, content_type, blob, srels)
+            sparts.append(spart)
+        return tuple(sparts)
 
     @staticmethod
     def _srels_for(phys_reader, source_uri):
         """
         Return |_SerializedRelationshipCollection| instance populated with
         relationships for source identified by *source_uri*.
+        """
+
+    @staticmethod
+    def _walk_phys_parts(phys_reader, srels, visited_partnames=None):
+        """
+        Generate a 3-tuple `(partname, blob, srels)` for each of the parts in
+        *phys_reader* by walking the relationship graph rooted at srels.
         """
 
 
@@ -73,3 +87,12 @@ class _ContentTypeMap(object):
         Return a new |_ContentTypeMap| instance populated with the contents
         of *content_types_xml*.
         """
+
+
+class _SerializedPart(object):
+    """
+    Value object for an OPC package part. Provides access to the partname,
+    content type, blob, and serialized relationships for the part.
+    """
+    def __init__(self, partname, content_type, blob, srels):
+        super(_SerializedPart, self).__init__()

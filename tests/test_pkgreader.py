@@ -11,12 +11,12 @@
 
 import pytest
 
-from mock import Mock, patch
+from mock import call, Mock, patch
 
 from opc.phys_pkg import ZipPkgReader
 from opc.pkgreader import _ContentTypeMap, PackageReader
 
-from .unitutil import initializer_mock, method_mock
+from .unitutil import class_mock, initializer_mock, method_mock
 
 
 class DescribePackageReader(object):
@@ -40,8 +40,16 @@ class DescribePackageReader(object):
         return _patch.start()
 
     @pytest.fixture
+    def _SerializedPart_(self, request):
+        return class_mock('opc.pkgreader._SerializedPart', request)
+
+    @pytest.fixture
     def _srels_for(self, request):
         return method_mock(PackageReader, '_srels_for', request)
+
+    @pytest.fixture
+    def _walk_phys_parts(self, request):
+        return method_mock(PackageReader, '_walk_phys_parts', request)
 
     def it_can_construct_from_pkg_file(self, init, PhysPkgReader_, from_xml,
                                        _srels_for, _load_serialized_parts):
@@ -77,3 +85,29 @@ class DescribePackageReader(object):
         # verify -----------------------
         assert retval == (partname, content_type, blob)
         assert iter_count == 1
+
+    def it_can_load_serialized_parts(self, _SerializedPart_, _walk_phys_parts):
+        # test data --------------------
+        test_data = (
+            ('/part/name1.xml', 'app/vnd.type_1', '<Part_1/>', 'srels_1'),
+            ('/part/name2.xml', 'app/vnd.type_2', '<Part_2/>', 'srels_2'),
+        )
+        iter_vals = [(t[0], t[2], t[3]) for t in test_data]
+        content_types = dict((t[0], t[1]) for t in test_data)
+        # mockery ----------------------
+        phys_reader = Mock(name='phys_reader')
+        pkg_srels = Mock(name='pkg_srels')
+        _walk_phys_parts.return_value = iter_vals
+        _SerializedPart_.side_effect = expected_sparts = (
+            Mock(name='spart_1'), Mock(name='spart_2')
+        )
+        # exercise ---------------------
+        retval = PackageReader._load_serialized_parts(phys_reader, pkg_srels,
+                                                      content_types)
+        # verify -----------------------
+        expected_calls = [
+            call('/part/name1.xml', 'app/vnd.type_1', '<Part_1/>', 'srels_1'),
+            call('/part/name2.xml', 'app/vnd.type_2', '<Part_2/>', 'srels_2'),
+        ]
+        assert _SerializedPart_.call_args_list == expected_calls
+        assert retval == expected_sparts
