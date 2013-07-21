@@ -111,3 +111,47 @@ class DescribePackageReader(object):
         ]
         assert _SerializedPart_.call_args_list == expected_calls
         assert retval == expected_sparts
+
+    def it_can_walk_phys_pkg_parts(self, _srels_for):
+        # test data --------------------
+        # +----------+       +--------+
+        # | pkg_rels |-----> | part_1 |
+        # +----------+       +--------+
+        #      |               |    ^
+        #      v               v    |
+        #   external         +--------+     +--------+
+        #                    | part_2 |---> | part_3 |
+        #                    +--------+     +--------+
+        partname_1, partname_2, partname_3 = (
+            '/part/name1.xml', '/part/name2.xml', '/part/name3.xml'
+        )
+        part_1_blob, part_2_blob, part_3_blob = (
+            '<Part_1/>', '<Part_2/>', '<Part_3/>'
+        )
+        srels = [
+            Mock(name='rId1', is_external=True),
+            Mock(name='rId2', is_external=False, target_partname=partname_1),
+            Mock(name='rId3', is_external=False, target_partname=partname_2),
+            Mock(name='rId4', is_external=False, target_partname=partname_1),
+            Mock(name='rId5', is_external=False, target_partname=partname_3),
+        ]
+        pkg_srels = srels[:2]
+        part_1_srels = srels[2:3]
+        part_2_srels = srels[3:5]
+        part_3_srels = []
+        # mockery ----------------------
+        phys_reader = Mock(name='phys_reader')
+        _srels_for.side_effect = [part_1_srels, part_2_srels, part_3_srels]
+        phys_reader.blob_for.side_effect = [
+            part_1_blob, part_2_blob, part_3_blob
+        ]
+        # exercise ---------------------
+        generated_tuples = [t for t in PackageReader._walk_phys_parts(
+            phys_reader, pkg_srels)]
+        # verify -----------------------
+        expected_tuples = [
+            (partname_1, part_1_blob, part_1_srels),
+            (partname_2, part_2_blob, part_2_srels),
+            (partname_3, part_3_blob, part_3_srels),
+        ]
+        assert generated_tuples == expected_tuples

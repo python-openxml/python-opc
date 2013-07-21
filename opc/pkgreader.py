@@ -74,6 +74,21 @@ class PackageReader(object):
         Generate a 3-tuple `(partname, blob, srels)` for each of the parts in
         *phys_reader* by walking the relationship graph rooted at srels.
         """
+        if visited_partnames is None:
+            visited_partnames = []
+        for srel in srels:
+            if srel.is_external:
+                continue
+            partname = srel.target_partname
+            if partname in visited_partnames:
+                continue
+            visited_partnames.append(partname)
+            part_srels = PackageReader._srels_for(phys_reader, partname)
+            blob = phys_reader.blob_for(partname)
+            yield (partname, blob, part_srels)
+            for partname, blob, srels in PackageReader._walk_phys_parts(
+                    phys_reader, part_srels, visited_partnames):
+                yield (partname, blob, srels)
 
 
 class _ContentTypeMap(object):
