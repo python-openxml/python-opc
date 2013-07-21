@@ -26,6 +26,8 @@ class ZipPkgReader(object):
     """
     Implements |PhysPkgReader| interface for a zip file OPC package.
     """
+    _CONTENT_TYPES_MEMBERNAME = '[Content_Types].xml'
+
     def __init__(self, pkg_file):
         super(ZipPkgReader, self).__init__()
         self._zipf = ZipFile(pkg_file, 'r')
@@ -41,3 +43,4 @@ class ZipPkgReader(object):
         """
         Return the `[Content_Types].xml` blob from the zip package.
         """
+        return self._zipf.read(self._CONTENT_TYPES_MEMBERNAME)

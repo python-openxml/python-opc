@@ -9,13 +9,18 @@
 
 """Test suite for opc.phys_pkg module."""
 
+import hashlib
+
 from opc.phys_pkg import PhysPkgReader, ZipPkgReader
 
 import pytest
 
 from mock import Mock
 
-from .unitutil import class_mock
+from .unitutil import abspath, class_mock
+
+
+test_pptx_path = abspath('test_files/test.pptx')
 
 
 @pytest.fixture
@@ -41,6 +46,12 @@ class DescribePhysPkgReader(object):
 
 class DescribeZipPkgReader(object):
 
+    @pytest.fixture(scope='class')
+    def phys_reader(self, request):
+        phys_reader = ZipPkgReader(test_pptx_path)
+        request.addfinalizer(phys_reader.close)
+        return phys_reader
+
     def it_opens_pkg_file_zip_on_construction(self, ZipFile_):
         pkg_file = Mock(name='pkg_file')
         ZipPkgReader(pkg_file)
@@ -54,3 +65,7 @@ class DescribeZipPkgReader(object):
         zip_pkg_reader.close()
         # verify -----------------------
         zipf.close.assert_called_once_with()
+
+    def it_has_the_content_types_xml(self, phys_reader):
+        sha1 = hashlib.sha1(phys_reader.content_types_xml).hexdigest()
+        assert sha1 == '9604a4fb3bf9626f5ad59a4e82029b3a501f106a'
