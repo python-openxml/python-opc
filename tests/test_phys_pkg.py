@@ -67,6 +67,12 @@ class DescribeZipPkgReader(object):
         # verify -----------------------
         zipf.close.assert_called_once_with()
 
+    def it_can_retrieve_the_blob_for_a_pack_uri(self, phys_reader):
+        pack_uri = PackURI('/ppt/presentation.xml')
+        blob = phys_reader.blob_for(pack_uri)
+        sha1 = hashlib.sha1(blob).hexdigest()
+        assert sha1 == 'efa7bee0ac72464903a67a6744c1169035d52a54'
+
     def it_has_the_content_types_xml(self, phys_reader):
         sha1 = hashlib.sha1(phys_reader.content_types_xml).hexdigest()
         assert sha1 == '9604a4fb3bf9626f5ad59a4e82029b3a501f106a'

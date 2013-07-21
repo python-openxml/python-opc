@@ -32,6 +32,13 @@ class ZipPkgReader(object):
         super(ZipPkgReader, self).__init__()
         self._zipf = ZipFile(pkg_file, 'r')
 
+    def blob_for(self, pack_uri):
+        """
+        Return blob corresponding to *pack_uri*. Raises |ValueError| if no
+        matching member is present in zip archive.
+        """
+        return self._zipf.read(pack_uri.membername)
+
     def close(self):
         """
         Close the zip archive, releasing any resources it is using.
