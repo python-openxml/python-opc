@@ -151,3 +151,40 @@ class DescribeUnmarshaller(object):
                               enumerate(part_properties))
         assert part_factory.call_args_list == expected_calls
         assert retval == expected_parts
+
+    def it_can_unmarshal_relationships(self):
+        # test data --------------------
+        reltype = 'http://reltype'
+        # mockery ----------------------
+        pkg_reader = Mock(name='pkg_reader')
+        pkg_reader.iter_srels.return_value = (
+            ('/',         Mock(name='srel1', rId='rId1', reltype=reltype,
+             target_partname='partname1', is_external=False)),
+            ('/',         Mock(name='srel2', rId='rId2', reltype=reltype,
+             target_ref='target_ref_1',   is_external=True)),
+            ('partname1', Mock(name='srel3', rId='rId3', reltype=reltype,
+             target_partname='partname2', is_external=False)),
+            ('partname2', Mock(name='srel4', rId='rId4', reltype=reltype,
+             target_ref='target_ref_2',   is_external=True)),
+        )
+        pkg = Mock(name='pkg')
+        parts = {}
+        for num in range(1, 3):
+            name = 'part%d' % num
+            part = Mock(name=name)
+            parts['partname%d' % num] = part
+            pkg.attach_mock(part, name)
+        # exercise ---------------------
+        Unmarshaller._unmarshal_relationships(pkg_reader, pkg, parts)
+        # verify -----------------------
+        expected_pkg_calls = [
+            call._add_relationship(
+                reltype, parts['partname1'], 'rId1', False),
+            call._add_relationship(
+                reltype, 'target_ref_1', 'rId2', True),
+            call.part1._add_relationship(
+                reltype, parts['partname2'], 'rId3', False),
+            call.part2._add_relationship(
+                reltype, 'target_ref_2', 'rId4', True),
+        ]
+        assert pkg.mock_calls == expected_pkg_calls

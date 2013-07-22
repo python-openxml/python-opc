@@ -148,3 +148,9 @@ class Unmarshaller(object):
         relationships in *pkg_reader* with its target_part set to the actual
         target part in *parts*.
         """
+        for source_uri, srel in pkg_reader.iter_srels():
+            source = pkg if source_uri == '/' else parts[source_uri]
+            target = (srel.target_ref if srel.is_external
+                      else parts[srel.target_partname])
+            source._add_relationship(srel.reltype, target, srel.rId,
+                                     srel.is_external)
