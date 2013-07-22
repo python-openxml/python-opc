@@ -66,6 +66,28 @@ class OxmlBaseElement(objectify.ObjectifiedElement):
         return oxml_tostring(self, encoding='unicode', pretty_print=True)
 
 
+class CT_Default(OxmlBaseElement):
+    """
+    ``<Default>`` element, specifying the default content type to be applied
+    to a part with the specified extension.
+    """
+    @property
+    def content_type(self):
+        """
+        String held in the ``ContentType`` attribute of this ``<Default>``
+        element.
+        """
+        return self.get('ContentType')
+
+    @property
+    def extension(self):
+        """
+        String held in the ``Extension`` attribute of this ``<Default>``
+        element.
+        """
+        return self.get('Extension')
+
+
 class CT_Relationship(OxmlBaseElement):
     """
     ``<Relationship>`` element, representing a single relationship from a
@@ -105,5 +127,7 @@ class CT_Relationship(OxmlBaseElement):
         return self.get('TargetMode', RTM.INTERNAL)
 
 
+ct_namespace = element_class_lookup.get_namespace(nsmap['ct'])
+ct_namespace['Default'] = CT_Default
 pr_namespace = element_class_lookup.get_namespace(nsmap['pr'])
 pr_namespace['Relationship'] = CT_Relationship

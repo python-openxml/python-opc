@@ -23,6 +23,24 @@ class BaseBuilder(object):
         return oxml_fromstring(self.xml)
 
 
+class CT_DefaultBuilder(BaseBuilder):
+    """
+    Test data builder for CT_Default (Default) XML element that appears in
+    `[Content_Types].xml`.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        self._content_type = 'application/xml'
+        self._extension = 'xml'
+        self._namespace = ' xmlns="%s"' % NS.OPC_CONTENT_TYPES
+
+    @property
+    def xml(self):
+        """Return Default element"""
+        tmpl = '<Default%s Extension="%s" ContentType="%s"/>\n'
+        return tmpl % (self._namespace, self._extension, self._content_type)
+
+
 class CT_RelationshipBuilder(BaseBuilder):
     """
     Test data builder for CT_Relationship (Relationship) XML element that
@@ -48,6 +66,11 @@ class CT_RelationshipBuilder(BaseBuilder):
         tmpl = '<Relationship%s Id="%s" Type="%s" Target="%s"%s/>\n'
         return tmpl % (self._namespace, self._rId, self._reltype,
                        self._target, self.target_mode)
+
+
+def a_Default():
+    """Return a CT_DefaultBuilder instance"""
+    return CT_DefaultBuilder()
 
 
 def a_Relationship():
