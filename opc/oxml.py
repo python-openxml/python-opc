@@ -155,6 +155,13 @@ class CT_Types(OxmlBaseElement):
     elements in [Content_Types].xml.
     """
     @property
+    def defaults(self):
+        try:
+            return self.Default[:]
+        except AttributeError:
+            return []
+
+    @property
     def overrides(self):
         try:
             return self.Override[:]

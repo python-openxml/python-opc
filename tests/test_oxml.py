@@ -10,7 +10,7 @@
 """Test suite for opc.oxml module."""
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
-from opc.oxml import CT_Override
+from opc.oxml import CT_Default, CT_Override
 
 from .unitdata import a_Default, an_Override, a_Relationship, a_Types
 
@@ -43,8 +43,19 @@ class DescribeCT_Relationship(object):
 
 class DescribeCT_Types(object):
 
+    def it_provides_access_to_default_child_elements(self):
+        types = a_Types().element
+        assert len(types.defaults) == 2
+        for default in types.defaults:
+            assert isinstance(default, CT_Default)
+
     def it_provides_access_to_override_child_elements(self):
         types = a_Types().element
         assert len(types.overrides) == 3
         for override in types.overrides:
             assert isinstance(override, CT_Override)
+
+    def it_should_have_empty_list_on_no_matching_elements(self):
+        types = a_Types().empty().element
+        assert types.defaults == []
+        assert types.overrides == []

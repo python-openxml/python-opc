@@ -37,13 +37,26 @@ class CT_DefaultBuilder(BaseBuilder):
         """Establish instance variables with default values"""
         self._content_type = 'application/xml'
         self._extension = 'xml'
+        self._indent = 0
         self._namespace = ' xmlns="%s"' % NS.OPC_CONTENT_TYPES
+
+    def with_content_type(self, content_type):
+        """Set ContentType attribute to *content_type*"""
+        self._content_type = content_type
+        return self
+
+    def with_extension(self, extension):
+        """Set Extension attribute to *extension*"""
+        self._extension = extension
+        return self
 
     @property
     def xml(self):
         """Return Default element"""
-        tmpl = '<Default%s Extension="%s" ContentType="%s"/>\n'
-        return tmpl % (self._namespace, self._extension, self._content_type)
+        tmpl = '%s<Default%s Extension="%s" ContentType="%s"/>\n'
+        indent = ' ' * self._indent
+        return tmpl % (indent, self._namespace, self._extension,
+                       self._content_type)
 
 
 class CT_OverrideBuilder(BaseBuilder):
@@ -111,18 +124,35 @@ class CT_TypesBuilder(BaseBuilder):
     """
     def __init__(self):
         """Establish instance variables with default values"""
+        self._defaults = (
+            ('xml', 'application/xml'),
+            ('jpeg', 'image/jpeg'),
+        )
+        self._empty = False
         self._overrides = (
             ('/docProps/core.xml', 'app/vnd.type1'),
             ('/ppt/presentation.xml', 'app/vnd.type2'),
             ('/docProps/thumbnail.jpeg', 'image/jpeg'),
         )
 
+    def empty(self):
+        self._empty = True
+        return self
+
     @property
     def xml(self):
         """
         Return XML string based on settings accumulated via method calls
         """
+        if self._empty:
+            return '<Types xmlns="%s"/>\n' % NS.OPC_CONTENT_TYPES
+
         xml = '<Types xmlns="%s">\n' % NS.OPC_CONTENT_TYPES
+        for extension, content_type in self._defaults:
+            xml += (a_Default().with_extension(extension)
+                               .with_content_type(content_type)
+                               .with_indent(2)
+                               .xml)
         for partname, content_type in self._overrides:
             xml += (an_Override().with_partname(partname)
                                  .with_content_type(content_type)
