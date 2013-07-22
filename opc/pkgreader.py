@@ -25,6 +25,7 @@ class PackageReader(object):
     """
     def __init__(self, content_types, pkg_srels, sparts):
         super(PackageReader, self).__init__()
+        self._pkg_srels = pkg_srels
         self._sparts = sparts
 
     @staticmethod
@@ -47,6 +48,17 @@ class PackageReader(object):
         """
         for spart in self._sparts:
             yield (spart.partname, spart.content_type, spart.blob)
+
+    def iter_srels(self):
+        """
+        Generate a 2-tuple `(source_uri, srel)` for each of the relationships
+        in the package.
+        """
+        for srel in self._pkg_srels:
+            yield (PACKAGE_URI, srel)
+        for spart in self._sparts:
+            for srel in spart.srels:
+                yield (spart.partname, srel)
 
     @staticmethod
     def _load_serialized_parts(phys_reader, pkg_srels, content_types):

@@ -103,6 +103,27 @@ class DescribePackageReader(object):
         assert retval == (partname, content_type, blob)
         assert iter_count == 1
 
+    def it_can_iterate_over_all_the_srels(self):
+        # mockery ----------------------
+        pkg_srels = ['srel1', 'srel2']
+        sparts = [
+            Mock(name='spart1', partname='pn1', srels=['srel3', 'srel4']),
+            Mock(name='spart2', partname='pn2', srels=['srel5', 'srel6']),
+        ]
+        pkg_reader = PackageReader(None, pkg_srels, sparts)
+        # exercise ---------------------
+        generated_tuples = [t for t in pkg_reader.iter_srels()]
+        # verify -----------------------
+        expected_tuples = [
+            ('/',   'srel1'),
+            ('/',   'srel2'),
+            ('pn1', 'srel3'),
+            ('pn1', 'srel4'),
+            ('pn2', 'srel5'),
+            ('pn2', 'srel6'),
+        ]
+        assert generated_tuples == expected_tuples
+
     def it_can_load_serialized_parts(self, _SerializedPart_, _walk_phys_parts):
         # test data --------------------
         test_data = (
