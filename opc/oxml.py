@@ -88,6 +88,28 @@ class CT_Default(OxmlBaseElement):
         return self.get('Extension')
 
 
+class CT_Override(OxmlBaseElement):
+    """
+    ``<Override>`` element, specifying the content type to be applied for a
+    part with the specified partname.
+    """
+    @property
+    def content_type(self):
+        """
+        String held in the ``ContentType`` attribute of this ``<Override>``
+        element.
+        """
+        return self.get('ContentType')
+
+    @property
+    def partname(self):
+        """
+        String held in the ``PartName`` attribute of this ``<Override>``
+        element.
+        """
+        return self.get('PartName')
+
+
 class CT_Relationship(OxmlBaseElement):
     """
     ``<Relationship>`` element, representing a single relationship from a
@@ -129,5 +151,7 @@ class CT_Relationship(OxmlBaseElement):
 
 ct_namespace = element_class_lookup.get_namespace(nsmap['ct'])
 ct_namespace['Default'] = CT_Default
+ct_namespace['Override'] = CT_Override
+
 pr_namespace = element_class_lookup.get_namespace(nsmap['pr'])
 pr_namespace['Relationship'] = CT_Relationship

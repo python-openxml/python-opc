@@ -41,6 +41,24 @@ class CT_DefaultBuilder(BaseBuilder):
         return tmpl % (self._namespace, self._extension, self._content_type)
 
 
+class CT_OverrideBuilder(BaseBuilder):
+    """
+    Test data builder for CT_Override (Override) XML element that appears in
+    `[Content_Types].xml`.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        self._content_type = 'app/vnd.type'
+        self._namespace = ' xmlns="%s"' % NS.OPC_CONTENT_TYPES
+        self._partname = '/part/name.xml'
+
+    @property
+    def xml(self):
+        """Return Override element"""
+        tmpl = '<Override%s PartName="%s" ContentType="%s"/>\n'
+        return tmpl % (self._namespace, self._partname, self._content_type)
+
+
 class CT_RelationshipBuilder(BaseBuilder):
     """
     Test data builder for CT_Relationship (Relationship) XML element that
@@ -71,6 +89,11 @@ class CT_RelationshipBuilder(BaseBuilder):
 def a_Default():
     """Return a CT_DefaultBuilder instance"""
     return CT_DefaultBuilder()
+
+
+def an_Override():
+    """Return a CT_OverrideBuilder instance"""
+    return CT_OverrideBuilder()
 
 
 def a_Relationship():

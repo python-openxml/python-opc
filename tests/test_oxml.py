@@ -11,7 +11,7 @@
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 
-from .unitdata import a_Default, a_Relationship
+from .unitdata import a_Default, an_Override, a_Relationship
 
 
 class DescribeCT_Default(object):
@@ -20,6 +20,14 @@ class DescribeCT_Default(object):
         default = a_Default().element
         assert default.extension == 'xml'
         assert default.content_type == 'application/xml'
+
+
+class DescribeCT_Override(object):
+
+    def it_provides_read_access_to_xml_values(self):
+        override = an_Override().element
+        assert override.partname == '/part/name.xml'
+        assert override.content_type == 'app/vnd.type'
 
 
 class DescribeCT_Relationship(object):
