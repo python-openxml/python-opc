@@ -144,6 +144,26 @@ class _SerializedPart(object):
     """
     def __init__(self, partname, content_type, blob, srels):
         super(_SerializedPart, self).__init__()
+        self._partname = partname
+        self._content_type = content_type
+        self._blob = blob
+        self._srels = srels
+
+    @property
+    def partname(self):
+        return self._partname
+
+    @property
+    def content_type(self):
+        return self._content_type
+
+    @property
+    def blob(self):
+        return self._blob
+
+    @property
+    def srels(self):
+        return self._srels
 
 
 class _SerializedRelationship(object):

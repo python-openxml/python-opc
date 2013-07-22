@@ -17,7 +17,7 @@ from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from opc.packuri import PackURI
 from opc.phys_pkg import ZipPkgReader
 from opc.pkgreader import (
-    _ContentTypeMap, PackageReader, _SerializedRelationship,
+    _ContentTypeMap, PackageReader, _SerializedPart, _SerializedRelationship,
     _SerializedRelationshipCollection
 )
 
@@ -257,6 +257,23 @@ class Describe_ContentTypeMap(object):
         ct_map._overrides = {PackURI('/part/name1.xml'): 'app/vnd.type1'}
         with pytest.raises(KeyError):
             ct_map['/part/name1.xml']
+
+
+class Describe_SerializedPart(object):
+
+    def it_remembers_construction_values(self):
+        # test data --------------------
+        partname = '/part/name.xml'
+        content_type = 'app/vnd.type'
+        blob = '<Part/>'
+        srels = 'srels proxy'
+        # exercise ---------------------
+        spart = _SerializedPart(partname, content_type, blob, srels)
+        # verify -----------------------
+        assert spart.partname == partname
+        assert spart.content_type == content_type
+        assert spart.blob == blob
+        assert spart.srels == srels
 
 
 class Describe_SerializedRelationship(object):
