@@ -14,9 +14,10 @@ import pytest
 from mock import call, Mock
 
 from opc.package import (
-    OpcPackage, Part, PartFactory, RelationshipCollection, Unmarshaller
+    OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
+    Unmarshaller
 )
-from opc.packuri import PACKAGE_URI
+from opc.packuri import PACKAGE_URI, PackURI
 
 from .unitutil import class_mock, method_mock
 
@@ -130,6 +131,43 @@ class DescribePartFactory(object):
         # verify -----------------------
         Part_.assert_called_once_with(partname, content_type, blob)
         assert part == Part_.return_value
+
+
+class Describe_Relationship(object):
+
+    def it_remembers_construction_values(self):
+        # test data --------------------
+        rId = 'rId9'
+        reltype = 'reltype'
+        target = Mock(name='target_part')
+        external = False
+        # exercise ---------------------
+        rel = _Relationship(rId, reltype, target, None, external)
+        # verify -----------------------
+        assert rel.rId == rId
+        assert rel.reltype == reltype
+        assert rel.target_part == target
+        assert rel.is_external == external
+
+    def it_should_raise_on_target_part_access_on_external_rel(self):
+        rel = _Relationship(None, None, None, None, external=True)
+        with pytest.raises(ValueError):
+            rel.target_part
+
+    def it_should_have_target_ref_for_external_rel(self):
+        rel = _Relationship(None, None, 'target', None, external=True)
+        assert rel.target_ref == 'target'
+
+    def it_should_have_relative_ref_for_internal_rel(self):
+        """
+        Internal relationships (TargetMode == 'Internal' in the XML) should
+        have a relative ref, e.g. '../slideLayouts/slideLayout1.xml', for
+        the target_ref attribute.
+        """
+        part = Mock(name='part', partname=PackURI('/ppt/media/image1.png'))
+        baseURI = '/ppt/slides'
+        rel = _Relationship(None, None, part, baseURI)  # external=False
+        assert rel.target_ref == '../media/image1.png'
 
 
 class DescribeRelationshipCollection(object):
