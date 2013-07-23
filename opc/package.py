@@ -150,6 +150,16 @@ class Part(object):
         # subclass
         pass
 
+    def _before_marshal(self):
+        """
+        Entry point for pre-serialization processing, for example to finalize
+        part naming if necessary. May be overridden by subclasses without
+        forwarding call to super.
+        """
+        # don't place any code here, just catch call if not overridden by
+        # subclass
+        pass
+
 
 class PartFactory(object):
     """

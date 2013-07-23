@@ -27,3 +27,4 @@ class PackageWriter(object):
         *pkg_rels* and *parts* and a content types stream based on the
         content types of the parts.
         """
+        raise NotImplementedError()

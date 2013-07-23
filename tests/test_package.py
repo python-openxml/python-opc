@@ -169,6 +169,9 @@ class DescribePart(object):
     def it_can_be_notified_after_unmarshalling_is_complete(self, part):
         part._after_unmarshal()
 
+    def it_can_be_notified_before_marshalling_is_started(self, part):
+        part._before_marshal()
+
 
 class DescribePartFactory(object):
 
