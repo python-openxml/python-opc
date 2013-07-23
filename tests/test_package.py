@@ -11,7 +11,7 @@
 
 import pytest
 
-from mock import call, Mock, patch
+from mock import call, Mock, patch, PropertyMock
 
 from opc.package import (
     OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
@@ -34,8 +34,22 @@ class DescribeOpcPackage(object):
         return class_mock('opc.package.PackageReader', request)
 
     @pytest.fixture
+    def PackageWriter_(self, request):
+        return class_mock('opc.package.PackageWriter', request)
+
+    @pytest.fixture
     def PartFactory_(self, request):
         return class_mock('opc.package.PartFactory', request)
+
+    @pytest.fixture
+    def parts(self, request):
+        """
+        Return a mock patching property OpcPackage.parts, reversing the
+        patch after each use.
+        """
+        _patch = patch.object(OpcPackage, 'parts', new_callable=PropertyMock)
+        request.addfinalizer(_patch.stop)
+        return _patch.start()
 
     @pytest.fixture
     def Unmarshaller_(self, request):
@@ -101,6 +115,19 @@ class DescribeOpcPackage(object):
         generated_parts = [part for part in OpcPackage._walk_parts(pkg_rels)]
         # verify -----------------------
         assert generated_parts == [part1, part2]
+
+    def it_can_save_to_a_pkg_file(self, PackageWriter_, parts):
+        # mockery ----------------------
+        pkg_file = Mock(name='pkg_file')
+        pkg = OpcPackage()
+        parts.return_value = parts = [Mock(name='part1'), Mock(name='part2')]
+        # exercise ---------------------
+        pkg.save(pkg_file)
+        # verify -----------------------
+        for part in parts:
+            part._before_marshal.assert_called_once_with()
+        PackageWriter_.write.assert_called_once_with(pkg_file, pkg._rels,
+                                                     parts)
 
 
 class DescribePart(object):

@@ -13,6 +13,7 @@ Provides an API for manipulating Open Packaging Convention (OPC) packages.
 
 from opc.packuri import PACKAGE_URI
 from opc.pkgreader import PackageReader
+from opc.pkgwriter import PackageWriter
 
 
 class OpcPackage(object):
@@ -51,6 +52,15 @@ class OpcPackage(object):
         relationships for this package.
         """
         return self._rels
+
+    def save(self, pkg_file):
+        """
+        Save this package to *pkg_file*, where *file* can be either a path to
+        a file (a string) or a file-like object.
+        """
+        for part in self.parts:
+            part._before_marshal()
+        PackageWriter.write(pkg_file, self._rels, self.parts)
 
     def _add_relationship(self, reltype, target, rId, external=False):
         """
