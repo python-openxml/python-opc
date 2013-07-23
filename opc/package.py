@@ -37,6 +37,14 @@ class OpcPackage(object):
         return pkg
 
     @property
+    def parts(self):
+        """
+        Return an immutable sequence (tuple) containing a reference to each
+        of the parts in this package.
+        """
+        return tuple([p for p in self._walk_parts(self._rels)])
+
+    @property
     def rels(self):
         """
         Return a reference to the |RelationshipCollection| holding the
@@ -51,6 +59,13 @@ class OpcPackage(object):
         ``RTM.EXTERNAL`` if *external* is |True|.
         """
         return self._rels.add_relationship(reltype, target, rId, external)
+
+    @staticmethod
+    def _walk_parts(rels, visited_parts=None):
+        """
+        Generate exactly one reference to each of the parts in the package by
+        performing a depth-first traversal of the rels graph.
+        """
 
 
 class Part(object):

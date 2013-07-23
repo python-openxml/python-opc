@@ -11,7 +11,7 @@
 
 import pytest
 
-from mock import call, Mock
+from mock import call, Mock, patch
 
 from opc.package import (
     OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
@@ -72,6 +72,14 @@ class DescribeOpcPackage(object):
         # verify -----------------------
         pkg._rels.add_relationship.assert_called_once_with(reltype, target,
                                                            rId, False)
+
+    def it_has_an_immutable_sequence_containing_its_parts(self):
+        # mockery ----------------------
+        parts = [Mock(name='part1'), Mock(name='part2')]
+        pkg = OpcPackage()
+        # verify -----------------------
+        with patch.object(OpcPackage, '_walk_parts', return_value=parts):
+            assert pkg.parts == (parts[0], parts[1])
 
 
 class DescribePart(object):
