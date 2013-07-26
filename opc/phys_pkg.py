@@ -22,6 +22,12 @@ class PhysPkgReader(object):
         return ZipPkgReader(pkg_file)
 
 
+class PhysPkgWriter(object):
+    """
+    Factory for physical package writer objects.
+    """
+
+
 class ZipPkgReader(object):
     """
     Implements |PhysPkgReader| interface for a zip file OPC package.
