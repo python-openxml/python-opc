@@ -13,7 +13,9 @@ import pytest
 
 from mock import call, Mock, patch
 
-from opc.pkgwriter import PackageWriter
+from opc.pkgwriter import _ContentTypesItem, PackageWriter
+
+from .unitutil import method_mock
 
 
 class DescribePackageWriter(object):
@@ -23,6 +25,10 @@ class DescribePackageWriter(object):
         _patch = patch('opc.pkgwriter.PhysPkgWriter')
         request.addfinalizer(_patch.stop)
         return _patch.start()
+
+    @pytest.fixture
+    def xml_for(self, request):
+        return method_mock(_ContentTypesItem, 'xml_for', request)
 
     @pytest.fixture
     def _write_methods(self, request):
@@ -60,3 +66,14 @@ class DescribePackageWriter(object):
         PhysPkgWriter_.assert_called_once_with(pkg_file)
         assert _write_methods.mock_calls == expected_calls
         phys_writer.close.assert_called_once_with()
+
+    def it_can_write_a_content_types_stream(self, xml_for):
+        # mockery ----------------------
+        phys_writer = Mock(name='phys_writer')
+        parts = Mock(name='parts')
+        # exercise ---------------------
+        PackageWriter._write_content_types_stream(phys_writer, parts)
+        # verify -----------------------
+        xml_for.assert_called_once_with(parts)
+        phys_writer.write.assert_called_once_with('/[Content_Types].xml',
+                                                  xml_for.return_value)

@@ -12,6 +12,7 @@ Provides a low-level, write-only API to a serialized Open Packaging
 Convention (OPC) package, essentially an implementation of OpcPackage.save()
 """
 
+from opc.packuri import CONTENT_TYPES_URI
 from opc.phys_pkg import PhysPkgWriter
 
 
@@ -41,7 +42,7 @@ class PackageWriter(object):
         Write ``[Content_Types].xml`` part to the physical package with an
         appropriate content type lookup target for each part in *parts*.
         """
-        raise NotImplementedError()
+        phys_writer.write(CONTENT_TYPES_URI, _ContentTypesItem.xml_for(parts))
 
     @staticmethod
     def _write_parts(phys_writer, parts):
@@ -58,3 +59,18 @@ class PackageWriter(object):
         package.
         """
         raise NotImplementedError()
+
+
+class _ContentTypesItem(object):
+    """
+    Service class that composes a content types item ([Content_Types].xml)
+    based on a list of parts. Not meant to be instantiated, its single
+    interface method is xml_for(), e.g. ``_ContentTypesItem.xml_for(parts)``.
+    """
+    @staticmethod
+    def xml_for(parts):
+        """
+        Return content types XML mapping each part in *parts* to the
+        appropriate content type and suitable for storage as
+        ``[Content_Types].xml`` in an OPC package.
+        """
