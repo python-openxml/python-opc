@@ -86,3 +86,10 @@ class ZipPkgWriter(object):
         releasing any resources it's using.
         """
         self._zipf.close()
+
+    def write(self, pack_uri, blob):
+        """
+        Write *blob* to this zip package with the membername corresponding to
+        *pack_uri*.
+        """
+        self._zipf.writestr(pack_uri.membername, blob)

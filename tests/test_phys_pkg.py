@@ -9,9 +9,14 @@
 
 """Test suite for opc.phys_pkg module."""
 
+try:
+    from io import BytesIO  # Python 3
+except ImportError:
+    from StringIO import StringIO as BytesIO
+
 import hashlib
 
-from zipfile import ZIP_DEFLATED
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from opc.packuri import PACKAGE_URI, PackURI
 from opc.phys_pkg import (
@@ -110,6 +115,12 @@ class DescribeZipPkgReader(object):
 
 class DescribeZipPkgWriter(object):
 
+    @pytest.fixture
+    def pkg_file(self, request):
+        pkg_file = BytesIO()
+        request.addfinalizer(pkg_file.close)
+        return pkg_file
+
     def it_opens_pkg_file_zip_on_construction(self, ZipFile_):
         pkg_file = Mock(name='pkg_file')
         ZipPkgWriter(pkg_file)
@@ -124,3 +135,19 @@ class DescribeZipPkgWriter(object):
         zip_pkg_writer.close()
         # verify -----------------------
         zipf.close.assert_called_once_with()
+
+    def it_can_write_a_blob(self, pkg_file):
+        # setup ------------------------
+        pack_uri = PackURI('/part/name.xml')
+        blob = '<BlobbityFooBlob/>'.encode('utf-8')
+        # exercise ---------------------
+        pkg_writer = PhysPkgWriter(pkg_file)
+        pkg_writer.write(pack_uri, blob)
+        pkg_writer.close()
+        # verify -----------------------
+        written_blob_sha1 = hashlib.sha1(blob).hexdigest()
+        zipf = ZipFile(pkg_file, 'r')
+        retrieved_blob = zipf.read(pack_uri.membername)
+        zipf.close()
+        retrieved_blob_sha1 = hashlib.sha1(retrieved_blob).hexdigest()
+        assert retrieved_blob_sha1 == written_blob_sha1
