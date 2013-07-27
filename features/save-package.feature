@@ -3,7 +3,6 @@ Feature: Save an OPC package
   As a pptx developer
   I want to see it pass a basic round-trip sanity-check
 
-  @wip
   Scenario: Round-trip a .pptx file
      Given a clean working directory
       When I open a PowerPoint file

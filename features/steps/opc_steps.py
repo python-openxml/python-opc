@@ -190,3 +190,12 @@ def step_then_expected_parts_are_loaded(context):
                 assert rel.target_part.partname == target, (
                     "target partname for %s on %s is '%s'" %
                     (rId, partname, rel.target_part.partname))
+
+
+@then('I see the pptx file in the working directory')
+def step_then_see_pptx_file_in_working_dir(context):
+    reason = "file '%s' not found" % saved_pptx_path
+    assert os.path.isfile(saved_pptx_path), reason
+    minimum = 20000
+    filesize = os.path.getsize(saved_pptx_path)
+    assert filesize > minimum
