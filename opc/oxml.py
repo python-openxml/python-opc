@@ -180,6 +180,22 @@ class CT_Types(OxmlBaseElement):
     ``<Types>`` element, the container element for Default and Override
     elements in [Content_Types].xml.
     """
+    def add_default(self, ext, content_type):
+        """
+        Add a child ``<Default>`` element with attributes set to parameter
+        values.
+        """
+        default = CT_Default.new(ext, content_type)
+        self.append(default)
+
+    def add_override(self, partname, content_type):
+        """
+        Add a child ``<Override>`` element with attributes set to parameter
+        values.
+        """
+        override = CT_Override.new(partname, content_type)
+        self.append(override)
+
     @property
     def defaults(self):
         try:

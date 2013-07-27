@@ -50,6 +50,11 @@ class CT_DefaultBuilder(BaseBuilder):
         self._extension = extension
         return self
 
+    def without_namespace(self):
+        """Don't include an 'xmlns=' attribute"""
+        self._namespace = ''
+        return self
+
     @property
     def xml(self):
         """Return Default element"""
@@ -79,6 +84,11 @@ class CT_OverrideBuilder(BaseBuilder):
     def with_partname(self, partname):
         """Set PartName attribute to *partname*"""
         self._partname = partname
+        return self
+
+    def without_namespace(self):
+        """Don't include an 'xmlns=' attribute"""
+        self._namespace = ''
         return self
 
     @property
@@ -152,11 +162,13 @@ class CT_TypesBuilder(BaseBuilder):
             xml += (a_Default().with_extension(extension)
                                .with_content_type(content_type)
                                .with_indent(2)
+                               .without_namespace()
                                .xml)
         for partname, content_type in self._overrides:
             xml += (an_Override().with_partname(partname)
                                  .with_content_type(content_type)
                                  .with_indent(2)
+                                 .without_namespace()
                                  .xml)
         xml += '</Types>\n'
         return xml

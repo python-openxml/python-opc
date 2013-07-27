@@ -74,3 +74,13 @@ class DescribeCT_Types(object):
         types = CT_Types.new()
         expected_xml = a_Types().empty().xml
         assert types.xml == expected_xml
+
+    def it_can_build_types_element_incrementally(self):
+        types = CT_Types.new()
+        types.add_default('.xml', 'application/xml')
+        types.add_default('.jpeg', 'image/jpeg')
+        types.add_override('/docProps/core.xml', 'app/vnd.type1')
+        types.add_override('/ppt/presentation.xml', 'app/vnd.type2')
+        types.add_override('/docProps/thumbnail.jpeg', 'image/jpeg')
+        expected_types_xml = a_Types().xml
+        assert types.xml == expected_types_xml
