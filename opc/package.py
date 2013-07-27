@@ -105,6 +105,11 @@ class RelationshipCollection(object):
     """
     def __init__(self, baseURI):
         super(RelationshipCollection, self).__init__()
+        self._rels = []
+
+    def __len__(self):
+        """Implements len() built-in on this object"""
+        return self._rels.__len__()
 
 
 class Unmarshaller(object):

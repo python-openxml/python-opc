@@ -13,7 +13,9 @@ import pytest
 
 from mock import call, Mock
 
-from opc.package import OpcPackage, Part, PartFactory, Unmarshaller
+from opc.package import (
+    OpcPackage, Part, PartFactory, RelationshipCollection, Unmarshaller
+)
 from opc.packuri import PACKAGE_URI
 
 from .unitutil import class_mock, method_mock
@@ -92,6 +94,13 @@ class DescribePartFactory(object):
         # verify -----------------------
         Part_.assert_called_once_with(partname, content_type, blob)
         assert part == Part_.return_value
+
+
+class DescribeRelationshipCollection(object):
+
+    def it_has_a_len(self):
+        rels = RelationshipCollection(None)
+        assert len(rels) == 0
 
 
 class DescribeUnmarshaller(object):
