@@ -53,7 +53,10 @@ class PackageWriter(object):
         Write the blob of each part in *parts* to the package, along with a
         rels item for its relationships if and only if it has any.
         """
-        raise NotImplementedError()
+        for part in parts:
+            phys_writer.write(part.partname, part.blob)
+            if len(part._rels):
+                phys_writer.write(part.partname.rels_uri, part._rels.xml)
 
     @staticmethod
     def _write_pkg_rels(phys_writer, pkg_rels):

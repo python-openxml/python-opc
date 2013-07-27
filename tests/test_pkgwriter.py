@@ -11,7 +11,7 @@
 
 import pytest
 
-from mock import call, Mock, patch
+from mock import call, MagicMock, Mock, patch
 
 from opc.constants import CONTENT_TYPE as CT
 from opc.packuri import PackURI
@@ -89,6 +89,23 @@ class DescribePackageWriter(object):
         # verify -----------------------
         phys_writer.write.assert_called_once_with('/_rels/.rels',
                                                   pkg_rels.xml)
+
+    def it_can_write_a_list_of_parts(self):
+        # mockery ----------------------
+        phys_writer = Mock(name='phys_writer')
+        rels = MagicMock(name='rels')
+        rels.__len__.return_value = 1
+        part1 = Mock(name='part1', _rels=rels)
+        part2 = Mock(name='part2', _rels=[])
+        # exercise ---------------------
+        PackageWriter._write_parts(phys_writer, [part1, part2])
+        # verify -----------------------
+        expected_calls = [
+            call(part1.partname, part1.blob),
+            call(part1.partname.rels_uri, part1._rels.xml),
+            call(part2.partname, part2.blob),
+        ]
+        assert phys_writer.write.mock_calls == expected_calls
 
 
 class Describe_ContentTypesItem(object):
