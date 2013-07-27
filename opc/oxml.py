@@ -213,6 +213,14 @@ class CT_Relationships(OxmlBaseElement):
         objectify.deannotate(relationships, cleanup_namespaces=True)
         return relationships
 
+    @property
+    def xml(self):
+        """
+        Return XML string for this element, suitable for saving in a .rels
+        stream, not pretty printed and with an XML declaration at the top.
+        """
+        return oxml_tostring(self, encoding='UTF-8', standalone=True)
+
 
 class CT_Types(OxmlBaseElement):
     """

@@ -98,6 +98,14 @@ class DescribeCT_Relationships(object):
                                    pretty_print=True)
         assert actual_xml == expected_rels_xml
 
+    def it_can_generate_rels_file_xml(self):
+        expected_xml = (
+            '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n'
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package'
+            '/2006/relationships"/>'.encode('utf-8')
+        )
+        assert CT_Relationships.new().xml == expected_xml
+
 
 class DescribeCT_Types(object):
 
