@@ -175,6 +175,17 @@ class CT_Relationship(OxmlBaseElement):
         return self.get('TargetMode', RTM.INTERNAL)
 
 
+class CT_Relationships(OxmlBaseElement):
+    """
+    ``<Relationships>`` element, the root element in a .rels file.
+    """
+    @staticmethod
+    def new():
+        """
+        Return a new ``<Relationships>`` element.
+        """
+
+
 class CT_Types(OxmlBaseElement):
     """
     ``<Types>`` element, the container element for Default and Override

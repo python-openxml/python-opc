@@ -11,6 +11,7 @@
 Provides an API for manipulating Open Packaging Convention (OPC) packages.
 """
 
+from opc.oxml import CT_Relationships
 from opc.packuri import PACKAGE_URI
 from opc.pkgreader import PackageReader
 from opc.pkgwriter import PackageWriter
@@ -242,6 +243,18 @@ class RelationshipCollection(object):
         rel = _Relationship(rId, reltype, target, self._baseURI, external)
         self._rels.append(rel)
         return rel
+
+    @property
+    def xml(self):
+        """
+        Serialize this relationship collection into XML suitable for storage
+        as a .rels file in an OPC package.
+        """
+        rels_elm = CT_Relationships.new()
+        for rel in self._rels:
+            rels_elm.add_rel(rel.rId, rel.reltype, rel.target_ref,
+                             rel.is_external)
+        return rels_elm.xml
 
 
 class Unmarshaller(object):

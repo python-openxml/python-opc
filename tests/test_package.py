@@ -13,6 +13,7 @@ import pytest
 
 from mock import call, Mock, patch, PropertyMock
 
+from opc.oxml import CT_Relationships
 from opc.package import (
     OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
     Unmarshaller
@@ -235,6 +236,41 @@ class DescribeRelationshipCollection(object):
     def _Relationship_(self, request):
         return class_mock('opc.package._Relationship', request)
 
+    @pytest.fixture
+    def rels(self):
+        """
+        Populated RelationshipCollection instance that will exercise the
+        rels.xml property.
+        """
+        rels = RelationshipCollection('/baseURI')
+        rels.add_relationship(
+            reltype='http://rt-hyperlink', target='http://some/link',
+            rId='rId1', external=True
+        )
+        part = Mock(name='part')
+        part.partname.relative_ref.return_value = '../media/image1.png'
+        rels.add_relationship(reltype='http://rt-image', target=part,
+                              rId='rId2')
+        return rels
+
+    @pytest.fixture
+    def rels_elm(self, request):
+        """
+        Return a rels_elm mock that will be returned from
+        CT_Relationships.new()
+        """
+        # create rels_elm mock with a .xml property
+        rels_elm = Mock(name='rels_elm')
+        xml = PropertyMock(name='xml')
+        type(rels_elm).xml = xml
+        rels_elm.attach_mock(xml, 'xml')
+        rels_elm.reset_mock()  # to clear attach_mock call
+        # patch CT_Relationships to return that rels_elm
+        patch_ = patch.object(CT_Relationships, 'new', return_value=rels_elm)
+        patch_.start()
+        request.addfinalizer(patch_.stop)
+        return rels_elm
+
     def it_has_a_len(self):
         rels = RelationshipCollection(None)
         assert len(rels) == 0
@@ -272,6 +308,21 @@ class DescribeRelationshipCollection(object):
                                                external)
         assert rels[0] == rel
         assert rel == _Relationship_.return_value
+
+    def it_can_compose_rels_xml(self, rels, rels_elm):
+        # exercise ---------------------
+        rels.xml
+        # trace ------------------------
+        print('Actual calls:\n%s' % rels_elm.mock_calls)
+        # verify -----------------------
+        expected_rels_elm_calls = [
+            call.add_rel('rId1', 'http://rt-hyperlink', 'http://some/link',
+                         True),
+            call.add_rel('rId2', 'http://rt-image', '../media/image1.png',
+                         False),
+            call.xml()
+        ]
+        assert rels_elm.mock_calls == expected_rels_elm_calls
 
 
 class DescribeUnmarshaller(object):
