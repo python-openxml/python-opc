@@ -111,7 +111,33 @@ class CT_RelationshipBuilder(BaseBuilder):
         self._reltype = 'ReLtYpE'
         self._target = 'docProps/core.xml'
         self._target_mode = None
+        self._indent = 0
         self._namespace = ' xmlns="%s"' % NS.OPC_RELATIONSHIPS
+
+    def with_rId(self, rId):
+        """Set Id attribute to *rId*"""
+        self._rId = rId
+        return self
+
+    def with_reltype(self, reltype):
+        """Set Type attribute to *reltype*"""
+        self._reltype = reltype
+        return self
+
+    def with_target(self, target):
+        """Set XXX attribute to *target*"""
+        self._target = target
+        return self
+
+    def with_target_mode(self, target_mode):
+        """Set TargetMode attribute to *target_mode*"""
+        self._target_mode = None if target_mode == 'Internal' else target_mode
+        return self
+
+    def without_namespace(self):
+        """Don't include an 'xmlns=' attribute"""
+        self._namespace = ''
+        return self
 
     @property
     def target_mode(self):
@@ -122,8 +148,9 @@ class CT_RelationshipBuilder(BaseBuilder):
     @property
     def xml(self):
         """Return Relationship element"""
-        tmpl = '<Relationship%s Id="%s" Type="%s" Target="%s"%s/>\n'
-        return tmpl % (self._namespace, self._rId, self._reltype,
+        tmpl = '%s<Relationship%s Id="%s" Type="%s" Target="%s"%s/>\n'
+        indent = ' ' * self._indent
+        return tmpl % (indent, self._namespace, self._rId, self._reltype,
                        self._target, self.target_mode)
 
 

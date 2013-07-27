@@ -141,6 +141,21 @@ class CT_Relationship(OxmlBaseElement):
     ``<Relationship>`` element, representing a single relationship from a
     source to a target part.
     """
+    @staticmethod
+    def new(rId, reltype, target, target_mode=RTM.INTERNAL):
+        """
+        Return a new ``<Relationship>`` element.
+        """
+        xml = '<Relationship xmlns="%s"/>' % nsmap['pr']
+        relationship = oxml_fromstring(xml)
+        relationship.set('Id', rId)
+        relationship.set('Type', reltype)
+        relationship.set('Target', target)
+        if target_mode == RTM.EXTERNAL:
+            relationship.set('TargetMode', RTM.EXTERNAL)
+        objectify.deannotate(relationship, cleanup_namespaces=True)
+        return relationship
+
     @property
     def rId(self):
         """

@@ -10,7 +10,7 @@
 """Test suite for opc.oxml module."""
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
-from opc.oxml import CT_Default, CT_Override, CT_Types
+from opc.oxml import CT_Default, CT_Override, CT_Relationship, CT_Types
 
 from .unitdata import a_Default, an_Override, a_Relationship, a_Types
 
@@ -49,6 +49,23 @@ class DescribeCT_Relationship(object):
         assert rel.reltype == 'ReLtYpE'
         assert rel.target_ref == 'docProps/core.xml'
         assert rel.target_mode == RTM.INTERNAL
+
+    def it_can_construct_from_attribute_values(self):
+        cases = (
+            ('rId9', 'ReLtYpE', 'foo/bar.xml',      None),
+            ('rId9', 'ReLtYpE', 'bar/foo.xml',      RTM.INTERNAL),
+            ('rId9', 'ReLtYpE', 'http://some/link', RTM.EXTERNAL),
+        )
+        for rId, reltype, target, target_mode in cases:
+            if target_mode is None:
+                rel = CT_Relationship.new(rId, reltype, target)
+            else:
+                rel = CT_Relationship.new(rId, reltype, target, target_mode)
+            builder = a_Relationship().with_target(target)
+            if target_mode == RTM.EXTERNAL:
+                builder = builder.with_target_mode(RTM.EXTERNAL)
+            expected_rel_xml = builder.xml
+            assert rel.xml == expected_rel_xml
 
 
 class DescribeCT_Types(object):
