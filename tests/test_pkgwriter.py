@@ -80,6 +80,16 @@ class DescribePackageWriter(object):
         phys_writer.write.assert_called_once_with('/[Content_Types].xml',
                                                   xml_for.return_value)
 
+    def it_can_write_a_pkg_rels_item(self):
+        # mockery ----------------------
+        phys_writer = Mock(name='phys_writer')
+        pkg_rels = Mock(name='pkg_rels')
+        # exercise ---------------------
+        PackageWriter._write_pkg_rels(phys_writer, pkg_rels)
+        # verify -----------------------
+        phys_writer.write.assert_called_once_with('/_rels/.rels',
+                                                  pkg_rels.xml)
+
 
 class Describe_ContentTypesItem(object):
 

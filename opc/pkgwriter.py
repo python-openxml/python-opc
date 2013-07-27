@@ -14,7 +14,7 @@ Convention (OPC) package, essentially an implementation of OpcPackage.save()
 
 from opc.constants import CONTENT_TYPE as CT
 from opc.oxml import CT_Types, oxml_tostring
-from opc.packuri import CONTENT_TYPES_URI
+from opc.packuri import CONTENT_TYPES_URI, PACKAGE_URI
 from opc.phys_pkg import PhysPkgWriter
 from opc.spec import default_content_types
 
@@ -61,7 +61,7 @@ class PackageWriter(object):
         Write the XML rels item for *pkg_rels* ('/_rels/.rels') to the
         package.
         """
-        raise NotImplementedError()
+        phys_writer.write(PACKAGE_URI.rels_uri, pkg_rels.xml)
 
 
 class _ContentTypesItem(object):
