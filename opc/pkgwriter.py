@@ -12,8 +12,11 @@ Provides a low-level, write-only API to a serialized Open Packaging
 Convention (OPC) package, essentially an implementation of OpcPackage.save()
 """
 
+from opc.constants import CONTENT_TYPE as CT
+from opc.oxml import CT_Types, oxml_tostring
 from opc.packuri import CONTENT_TYPES_URI
 from opc.phys_pkg import PhysPkgWriter
+from opc.spec import default_content_types
 
 
 class PackageWriter(object):
@@ -74,3 +77,38 @@ class _ContentTypesItem(object):
         appropriate content type and suitable for storage as
         ``[Content_Types].xml`` in an OPC package.
         """
+        defaults = dict((('.rels', CT.OPC_RELATIONSHIPS), ('.xml', CT.XML)))
+        overrides = dict()
+        for part in parts:
+            _ContentTypesItem._add_content_type(
+                defaults, overrides, part.partname, part.content_type
+            )
+        return _ContentTypesItem._xml(defaults, overrides)
+
+    @staticmethod
+    def _add_content_type(defaults, overrides, partname, content_type):
+        """
+        Add a content type for the part with *partname* and *content_type*,
+        using a default or override as appropriate.
+        """
+        ext = partname.ext
+        if (ext, content_type) in default_content_types:
+            defaults[ext] = content_type
+        else:
+            overrides[partname] = content_type
+
+    @staticmethod
+    def _xml(defaults, overrides):
+        """
+        XML form of this content types item, suitable for storage as
+        ``[Content_Types].xml`` in an OPC package. Although the sequence of
+        elements is not strictly significant, as an aid to testing and
+        readability Default elements are sorted by extension and Override
+        elements are sorted by partname.
+        """
+        _types_elm = CT_Types.new()
+        for ext in sorted(defaults.keys()):
+            _types_elm.add_default(ext, defaults[ext])
+        for partname in sorted(overrides.keys()):
+            _types_elm.add_override(partname, overrides[partname])
+        return oxml_tostring(_types_elm, encoding='UTF-8', standalone=True)
