@@ -3,6 +3,12 @@ Feature: Save an OPC package
   As a pptx developer
   I want to see it pass a basic round-trip sanity-check
 
+  Scenario: Round-trip a .docx file
+     Given a clean working directory
+      When I open a Word file
+       And I save the document package
+      Then I see the docx file in the working directory
+
   Scenario: Round-trip a .pptx file
      Given a clean working directory
       When I open a PowerPoint file

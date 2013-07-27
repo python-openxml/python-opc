@@ -24,7 +24,9 @@ def absjoin(*paths):
 thisdir = os.path.split(__file__)[0]
 scratch_dir = absjoin(thisdir, '../_scratch')
 test_file_dir = absjoin(thisdir, '../../tests/test_files')
+basic_docx_path = absjoin(test_file_dir, 'test.docx')
 basic_pptx_path = absjoin(test_file_dir, 'test.pptx')
+saved_docx_path = absjoin(scratch_dir, 'test_out.docx')
 saved_pptx_path = absjoin(scratch_dir, 'test_out.pptx')
 
 
@@ -32,8 +34,10 @@ saved_pptx_path = absjoin(scratch_dir, 'test_out.pptx')
 
 @given('a clean working directory')
 def step_given_clean_working_dir(context):
-    if os.path.isfile(saved_pptx_path):
-        os.remove(saved_pptx_path)
+    files_to_clean_out = (saved_docx_path, saved_pptx_path)
+    for path in files_to_clean_out:
+        if os.path.isfile(path):
+            os.remove(path)
 
 
 @given('a python-opc working environment')
@@ -46,6 +50,18 @@ def step_given_python_opc_working_environment(context):
 @when('I open a PowerPoint file')
 def step_when_open_basic_pptx(context):
     context.pkg = OpcPackage.open(basic_pptx_path)
+
+
+@when('I open a Word file')
+def step_when_open_basic_docx(context):
+    context.pkg = OpcPackage.open(basic_docx_path)
+
+
+@when('I save the document package')
+def step_when_save_document_package(context):
+    if os.path.isfile(saved_docx_path):
+        os.remove(saved_docx_path)
+    context.pkg.save(saved_docx_path)
 
 
 @when('I save the presentation package')
@@ -190,6 +206,15 @@ def step_then_expected_parts_are_loaded(context):
                 assert rel.target_part.partname == target, (
                     "target partname for %s on %s is '%s'" %
                     (rId, partname, rel.target_part.partname))
+
+
+@then('I see the docx file in the working directory')
+def step_then_see_docx_file_in_working_dir(context):
+    reason = "file '%s' not found" % saved_docx_path
+    assert os.path.isfile(saved_docx_path), reason
+    minimum = 20000
+    filesize = os.path.getsize(saved_docx_path)
+    assert filesize > minimum
 
 
 @then('I see the pptx file in the working directory')
