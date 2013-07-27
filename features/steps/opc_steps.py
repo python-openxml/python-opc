@@ -26,15 +26,17 @@ scratch_dir = absjoin(thisdir, '../_scratch')
 test_file_dir = absjoin(thisdir, '../../tests/test_files')
 basic_docx_path = absjoin(test_file_dir, 'test.docx')
 basic_pptx_path = absjoin(test_file_dir, 'test.pptx')
+basic_xlsx_path = absjoin(test_file_dir, 'test.xlsx')
 saved_docx_path = absjoin(scratch_dir, 'test_out.docx')
 saved_pptx_path = absjoin(scratch_dir, 'test_out.pptx')
+saved_xlsx_path = absjoin(scratch_dir, 'test_out.xlsx')
 
 
 # given ====================================================
 
 @given('a clean working directory')
 def step_given_clean_working_dir(context):
-    files_to_clean_out = (saved_docx_path, saved_pptx_path)
+    files_to_clean_out = (saved_docx_path, saved_pptx_path, saved_xlsx_path)
     for path in files_to_clean_out:
         if os.path.isfile(path):
             os.remove(path)
@@ -46,6 +48,11 @@ def step_given_python_opc_working_environment(context):
 
 
 # when =====================================================
+
+@when('I open an Excel file')
+def step_when_open_basic_xlsx(context):
+    context.pkg = OpcPackage.open(basic_xlsx_path)
+
 
 @when('I open a PowerPoint file')
 def step_when_open_basic_pptx(context):
@@ -69,6 +76,13 @@ def step_when_save_presentation_package(context):
     if os.path.isfile(saved_pptx_path):
         os.remove(saved_pptx_path)
     context.pkg.save(saved_pptx_path)
+
+
+@when('I save the spreadsheet package')
+def step_when_save_spreadsheet_package(context):
+    if os.path.isfile(saved_xlsx_path):
+        os.remove(saved_xlsx_path)
+    context.pkg.save(saved_xlsx_path)
 
 
 # then =====================================================
@@ -223,4 +237,13 @@ def step_then_see_pptx_file_in_working_dir(context):
     assert os.path.isfile(saved_pptx_path), reason
     minimum = 20000
     filesize = os.path.getsize(saved_pptx_path)
+    assert filesize > minimum
+
+
+@then('I see the xlsx file in the working directory')
+def step_then_see_xlsx_file_in_working_dir(context):
+    reason = "file '%s' not found" % saved_xlsx_path
+    assert os.path.isfile(saved_xlsx_path), reason
+    minimum = 30000
+    filesize = os.path.getsize(saved_xlsx_path)
     assert filesize > minimum

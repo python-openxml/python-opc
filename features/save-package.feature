@@ -14,3 +14,9 @@ Feature: Save an OPC package
       When I open a PowerPoint file
        And I save the presentation package
       Then I see the pptx file in the working directory
+
+  Scenario: Round-trip an .xlsx file
+     Given a clean working directory
+      When I open an Excel file
+       And I save the spreadsheet package
+      Then I see the xlsx file in the working directory
