@@ -28,7 +28,7 @@ LICENSE = 'MIT'
 PACKAGES = ['opc']
 
 INSTALL_REQUIRES = ['lxml']
-TEST_SUITE = 'test'
+TEST_SUITE = 'tests'
 TESTS_REQUIRE = ['behave', 'mock', 'pytest']
 
 CLASSIFIERS = [
