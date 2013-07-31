@@ -66,6 +66,18 @@ class DescribePackURI(object):
         for pack_uri, expected_membername in self.cases(expected_values):
             assert pack_uri.membername == expected_membername
 
+    def it_can_calculate_relative_ref_value(self):
+        cases = (
+            ('/', '/ppt/presentation.xml', 'ppt/presentation.xml'),
+            ('/ppt', '/ppt/slideMasters/slideMaster1.xml',
+             'slideMasters/slideMaster1.xml'),
+            ('/ppt/slides', '/ppt/slideLayouts/slideLayout1.xml',
+             '../slideLayouts/slideLayout1.xml'),
+        )
+        for baseURI, uri_str, expected_relative_ref in cases:
+            pack_uri = PackURI(uri_str)
+            assert pack_uri.relative_ref(baseURI) == expected_relative_ref
+
     def it_can_calculate_rels_uri(self):
         expected_values = (
             '/_rels/.rels',

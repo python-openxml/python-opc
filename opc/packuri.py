@@ -72,6 +72,20 @@ class PackURI(str):
         """
         return self[1:]
 
+    def relative_ref(self, baseURI):
+        """
+        Return string containing relative reference to package item from
+        *baseURI*. E.g. PackURI('/ppt/slideLayouts/slideLayout1.xml') would
+        return '../slideLayouts/slideLayout1.xml' for baseURI '/ppt/slides'.
+        """
+        # workaround for posixpath bug in 2.6, doesn't generate correct
+        # relative path when *start* (second) parameter is root ('/')
+        if baseURI == '/':
+            relpath = self[1:]
+        else:
+            relpath = posixpath.relpath(self, baseURI)
+        return relpath
+
     @property
     def rels_uri(self):
         """
