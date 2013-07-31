@@ -15,7 +15,9 @@ from opc.oxml import (
     oxml_tostring
 )
 
-from .unitdata import a_Default, an_Override, a_Relationship, a_Types
+from .unitdata import (
+    a_Default, an_Override, a_Relationship, a_Relationships, a_Types
+)
 
 
 class DescribeCT_Default(object):
@@ -82,6 +84,19 @@ class DescribeCT_Relationships(object):
             '/2006/relationships"/>\n'
         )
         assert actual_xml == expected_xml
+
+    def it_can_build_rels_element_incrementally(self):
+        # setup ------------------------
+        rels = CT_Relationships.new()
+        # exercise ---------------------
+        rels.add_rel('rId1', 'http://reltype1', 'docProps/core.xml')
+        rels.add_rel('rId2', 'http://linktype', 'http://some/link', True)
+        rels.add_rel('rId3', 'http://reltype2', '../slides/slide1.xml')
+        # verify -----------------------
+        expected_rels_xml = a_Relationships().xml
+        actual_xml = oxml_tostring(rels, encoding='unicode',
+                                   pretty_print=True)
+        assert actual_xml == expected_rels_xml
 
 
 class DescribeCT_Types(object):

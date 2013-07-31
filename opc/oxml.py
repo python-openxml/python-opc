@@ -194,6 +194,15 @@ class CT_Relationships(OxmlBaseElement):
     """
     ``<Relationships>`` element, the root element in a .rels file.
     """
+    def add_rel(self, rId, reltype, target, is_external=False):
+        """
+        Add a child ``<Relationship>`` element with attributes set according
+        to parameter values.
+        """
+        target_mode = RTM.EXTERNAL if is_external else RTM.INTERNAL
+        relationship = CT_Relationship.new(rId, reltype, target, target_mode)
+        self.append(relationship)
+
     @staticmethod
     def new():
         """
@@ -258,3 +267,4 @@ ct_namespace['Types'] = CT_Types
 
 pr_namespace = element_class_lookup.get_namespace(nsmap['pr'])
 pr_namespace['Relationship'] = CT_Relationship
+pr_namespace['Relationships'] = CT_Relationships

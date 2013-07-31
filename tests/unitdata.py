@@ -154,6 +154,37 @@ class CT_RelationshipBuilder(BaseBuilder):
                        self._target, self.target_mode)
 
 
+class CT_RelationshipsBuilder(BaseBuilder):
+    """
+    Test data builder for CT_Relationships (Relationships) XML element, the
+    root element in .rels files.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        self._rels = (
+            ('rId1', 'http://reltype1', 'docProps/core.xml',    'Internal'),
+            ('rId2', 'http://linktype', 'http://some/link',     'External'),
+            ('rId3', 'http://reltype2', '../slides/slide1.xml', 'Internal'),
+        )
+
+    @property
+    def xml(self):
+        """
+        Return XML string based on settings accumulated via method calls.
+        """
+        xml = '<Relationships xmlns="%s">\n' % NS.OPC_RELATIONSHIPS
+        for rId, reltype, target, target_mode in self._rels:
+            xml += (a_Relationship().with_rId(rId)
+                                    .with_reltype(reltype)
+                                    .with_target(target)
+                                    .with_target_mode(target_mode)
+                                    .with_indent(2)
+                                    .without_namespace()
+                                    .xml)
+        xml += '</Relationships>\n'
+        return xml
+
+
 class CT_TypesBuilder(BaseBuilder):
     """
     Test data builder for CT_Types (<Types>) XML element, the root element in
@@ -214,6 +245,11 @@ def an_Override():
 def a_Relationship():
     """Return a CT_RelationshipBuilder instance"""
     return CT_RelationshipBuilder()
+
+
+def a_Relationships():
+    """Return a CT_RelationshipsBuilder instance"""
+    return CT_RelationshipsBuilder()
 
 
 def a_Types():
