@@ -66,6 +66,16 @@ class Part(object):
         """
         return self._partname
 
+    def _after_unmarshal(self):
+        """
+        Entry point for post-unmarshaling processing, for example to parse
+        the part XML. May be overridden by subclasses without forwarding call
+        to super.
+        """
+        # don't place any code here, just catch call if not overridden by
+        # subclass
+        pass
+
 
 class PartFactory(object):
     """

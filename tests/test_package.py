@@ -58,6 +58,10 @@ class DescribePart(object):
         assert part.content_type == content_type
         assert part.partname == partname
 
+    def it_can_be_notified_after_unmarshalling_is_complete(self):
+        part = Part(None, None, None)
+        part._after_unmarshal()
+
 
 class DescribePartFactory(object):
 
