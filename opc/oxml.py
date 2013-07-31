@@ -161,6 +161,16 @@ class CT_Types(OxmlBaseElement):
         except AttributeError:
             return []
 
+    @staticmethod
+    def new():
+        """
+        Return a new ``<Types>`` element.
+        """
+        xml = '<Types xmlns="%s"/>' % nsmap['ct']
+        types = oxml_fromstring(xml)
+        objectify.deannotate(types, cleanup_namespaces=True)
+        return types
+
     @property
     def overrides(self):
         try:

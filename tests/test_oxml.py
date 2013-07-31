@@ -10,7 +10,7 @@
 """Test suite for opc.oxml module."""
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
-from opc.oxml import CT_Default, CT_Override
+from opc.oxml import CT_Default, CT_Override, CT_Types
 
 from .unitdata import a_Default, an_Override, a_Relationship, a_Types
 
@@ -59,3 +59,8 @@ class DescribeCT_Types(object):
         types = a_Types().empty().element
         assert types.defaults == []
         assert types.overrides == []
+
+    def it_can_construct_a_new_types_element(self):
+        types = CT_Types.new()
+        expected_xml = a_Types().empty().xml
+        assert types.xml == expected_xml
