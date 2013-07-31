@@ -44,6 +44,14 @@ class OpcPackage(object):
         """
         return self._rels
 
+    def _add_relationship(self, reltype, target, rId, external=False):
+        """
+        Return newly added |_Relationship| instance of *reltype* between this
+        package and part *target* with key *rId*. Target mode is set to
+        ``RTM.EXTERNAL`` if *external* is |True|.
+        """
+        return self._rels.add_relationship(reltype, target, rId, external)
+
 
 class Part(object):
     """

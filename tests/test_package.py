@@ -59,6 +59,19 @@ class DescribeOpcPackage(object):
         RelationshipCollection_.assert_called_once_with(PACKAGE_URI.baseURI)
         assert pkg.rels == RelationshipCollection_.return_value
 
+    def it_can_add_a_relationship_to_a_part(self):
+        # mockery ----------------------
+        reltype, target, rId = (
+            Mock(name='reltype'), Mock(name='target'), Mock(name='rId')
+        )
+        pkg = OpcPackage()
+        pkg._rels = Mock(name='_rels')
+        # exercise ---------------------
+        pkg._add_relationship(reltype, target, rId)
+        # verify -----------------------
+        pkg._rels.add_relationship.assert_called_once_with(reltype, target,
+                                                           rId, False)
+
 
 class DescribePart(object):
 
