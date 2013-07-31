@@ -11,8 +11,12 @@
 
 import hashlib
 
+from zipfile import ZIP_DEFLATED
+
 from opc.packuri import PACKAGE_URI, PackURI
-from opc.phys_pkg import PhysPkgReader, PhysPkgWriter, ZipPkgReader
+from opc.phys_pkg import (
+    PhysPkgReader, PhysPkgWriter, ZipPkgReader, ZipPkgWriter
+)
 
 import pytest
 
@@ -102,3 +106,12 @@ class DescribeZipPkgReader(object):
         partname = PackURI('/ppt/viewProps.xml')
         rels_xml = phys_reader.rels_xml_for(partname)
         assert rels_xml is None
+
+
+class DescribeZipPkgWriter(object):
+
+    def it_opens_pkg_file_zip_on_construction(self, ZipFile_):
+        pkg_file = Mock(name='pkg_file')
+        ZipPkgWriter(pkg_file)
+        ZipFile_.assert_called_once_with(pkg_file, 'w',
+                                         compression=ZIP_DEFLATED)
