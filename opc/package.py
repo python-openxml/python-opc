@@ -38,6 +38,33 @@ class Part(object):
     intended to be subclassed in client code to implement specific part
     behaviors.
     """
+    def __init__(self, partname, content_type, blob):
+        super(Part, self).__init__()
+        self._partname = partname
+        self._content_type = content_type
+        self._blob = blob
+
+    @property
+    def blob(self):
+        """
+        Contents of this package part as a sequence of bytes. May be text or
+        binary.
+        """
+        return self._blob
+
+    @property
+    def content_type(self):
+        """
+        Content type of this part.
+        """
+        return self._content_type
+
+    @property
+    def partname(self):
+        """
+        |PackURI| instance containing partname for this part.
+        """
+        return self._partname
 
 
 class PartFactory(object):
