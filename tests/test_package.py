@@ -81,6 +81,27 @@ class DescribeOpcPackage(object):
         with patch.object(OpcPackage, '_walk_parts', return_value=parts):
             assert pkg.parts == (parts[0], parts[1])
 
+    def it_can_iterate_over_parts_by_walking_rels_graph(self):
+        # +----------+       +--------+
+        # | pkg_rels |-----> | part_1 |
+        # +----------+       +--------+
+        #      |               |    ^
+        #      v               v    |
+        #   external         +--------+
+        #                    | part_2 |
+        #                    +--------+
+        part1, part2 = (Mock(name='part1'), Mock(name='part2'))
+        part1._rels = [Mock(name='rel1', is_external=False, target_part=part2)]
+        part2._rels = [Mock(name='rel2', is_external=False, target_part=part1)]
+        pkg_rels = [
+            Mock(name='rel3', is_external=False, target_part=part1),
+            Mock(name='rel3', is_external=True),
+        ]
+        # exercise ---------------------
+        generated_parts = [part for part in OpcPackage._walk_parts(pkg_rels)]
+        # verify -----------------------
+        assert generated_parts == [part1, part2]
+
 
 class DescribePart(object):
 

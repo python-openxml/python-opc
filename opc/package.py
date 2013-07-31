@@ -66,6 +66,18 @@ class OpcPackage(object):
         Generate exactly one reference to each of the parts in the package by
         performing a depth-first traversal of the rels graph.
         """
+        if visited_parts is None:
+            visited_parts = []
+        for rel in rels:
+            if rel.is_external:
+                continue
+            part = rel.target_part
+            if part in visited_parts:
+                continue
+            visited_parts.append(part)
+            yield part
+            for part in OpcPackage._walk_parts(part._rels, visited_parts):
+                yield part
 
 
 class Part(object):
