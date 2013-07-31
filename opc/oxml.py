@@ -87,6 +87,19 @@ class CT_Default(OxmlBaseElement):
         """
         return self.get('Extension')
 
+    @staticmethod
+    def new(ext, content_type):
+        """
+        Return a new ``<Default>`` element with attributes set to parameter
+        values.
+        """
+        xml = '<Default xmlns="%s"/>' % nsmap['ct']
+        default = oxml_fromstring(xml)
+        default.set('Extension', ext[1:])
+        default.set('ContentType', content_type)
+        objectify.deannotate(default, cleanup_namespaces=True)
+        return default
+
 
 class CT_Override(OxmlBaseElement):
     """

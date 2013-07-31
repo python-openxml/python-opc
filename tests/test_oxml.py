@@ -22,6 +22,11 @@ class DescribeCT_Default(object):
         assert default.extension == 'xml'
         assert default.content_type == 'application/xml'
 
+    def it_can_construct_a_new_default_element(self):
+        default = CT_Default.new('.xml', 'application/xml')
+        expected_xml = a_Default().xml
+        assert default.xml == expected_xml
+
 
 class DescribeCT_Override(object):
 
