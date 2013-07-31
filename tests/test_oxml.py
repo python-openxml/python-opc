@@ -35,6 +35,11 @@ class DescribeCT_Override(object):
         assert override.partname == '/part/name.xml'
         assert override.content_type == 'app/vnd.type'
 
+    def it_can_construct_a_new_override_element(self):
+        override = CT_Override.new('/part/name.xml', 'app/vnd.type')
+        expected_xml = an_Override().xml
+        assert override.xml == expected_xml
+
 
 class DescribeCT_Relationship(object):
 

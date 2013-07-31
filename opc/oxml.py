@@ -114,6 +114,19 @@ class CT_Override(OxmlBaseElement):
         """
         return self.get('ContentType')
 
+    @staticmethod
+    def new(partname, content_type):
+        """
+        Return a new ``<Override>`` element with attributes set to parameter
+        values.
+        """
+        xml = '<Override xmlns="%s"/>' % nsmap['ct']
+        override = oxml_fromstring(xml)
+        override.set('PartName', partname)
+        override.set('ContentType', content_type)
+        objectify.deannotate(override, cleanup_namespaces=True)
+        return override
+
     @property
     def partname(self):
         """
