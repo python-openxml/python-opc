@@ -79,3 +79,10 @@ class ZipPkgWriter(object):
     def __init__(self, pkg_file):
         super(ZipPkgWriter, self).__init__()
         self._zipf = ZipFile(pkg_file, 'w', compression=ZIP_DEFLATED)
+
+    def close(self):
+        """
+        Close the zip archive, flushing any pending physical writes and
+        releasing any resources it's using.
+        """
+        self._zipf.close()

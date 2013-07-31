@@ -115,3 +115,12 @@ class DescribeZipPkgWriter(object):
         ZipPkgWriter(pkg_file)
         ZipFile_.assert_called_once_with(pkg_file, 'w',
                                          compression=ZIP_DEFLATED)
+
+    def it_can_be_closed(self, ZipFile_):
+        # mockery ----------------------
+        zipf = ZipFile_.return_value
+        zip_pkg_writer = ZipPkgWriter(None)
+        # exercise ---------------------
+        zip_pkg_writer.close()
+        # verify -----------------------
+        zipf.close.assert_called_once_with()
