@@ -75,6 +75,10 @@ class DescribeOpcPackage(object):
 
 class DescribePart(object):
 
+    @pytest.fixture
+    def part(self):
+        return Part(None, None, None)
+
     def it_remembers_its_construction_state(self):
         partname, content_type, blob = (
             Mock(name='partname'), Mock(name='content_type'),
@@ -85,8 +89,19 @@ class DescribePart(object):
         assert part.content_type == content_type
         assert part.partname == partname
 
-    def it_can_be_notified_after_unmarshalling_is_complete(self):
-        part = Part(None, None, None)
+    def it_can_add_a_relationship_to_another_part(self, part):
+        # mockery ----------------------
+        reltype, target, rId = (
+            Mock(name='reltype'), Mock(name='target'), Mock(name='rId')
+        )
+        part._rels = Mock(name='_rels')
+        # exercise ---------------------
+        part._add_relationship(reltype, target, rId)
+        # verify -----------------------
+        part._rels.add_relationship.assert_called_once_with(reltype, target,
+                                                            rId, False)
+
+    def it_can_be_notified_after_unmarshalling_is_complete(self, part):
         part._after_unmarshal()
 
 

@@ -87,6 +87,14 @@ class Part(object):
         """
         return self._partname
 
+    def _add_relationship(self, reltype, target, rId, external=False):
+        """
+        Return newly added |_Relationship| instance of *reltype* between this
+        part and *target* with key *rId*. Target mode is set to
+        ``RTM.EXTERNAL`` if *external* is |True|.
+        """
+        return self._rels.add_relationship(reltype, target, rId, external)
+
     def _after_unmarshal(self):
         """
         Entry point for post-unmarshaling processing, for example to parse
