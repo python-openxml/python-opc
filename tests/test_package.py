@@ -13,7 +13,7 @@ import pytest
 
 from mock import call, Mock
 
-from opc.package import OpcPackage, Unmarshaller
+from opc.package import OpcPackage, PartFactory, Unmarshaller
 
 from .unitutil import class_mock, method_mock
 
@@ -44,6 +44,25 @@ class DescribeOpcPackage(object):
         Unmarshaller_.unmarshal.assert_called_once_with(pkg_reader, pkg,
                                                         PartFactory_)
         assert isinstance(pkg, OpcPackage)
+
+
+class DescribePartFactory(object):
+
+    @pytest.fixture
+    def Part_(self, request):
+        return class_mock('opc.package.Part', request)
+
+    def it_constructs_a_part_instance(self, Part_):
+        # mockery ----------------------
+        partname, content_type, blob = (
+            Mock(name='partname'), Mock(name='content_type'),
+            Mock(name='blob')
+        )
+        # exercise ---------------------
+        part = PartFactory(partname, content_type, blob)
+        # verify -----------------------
+        Part_.assert_called_once_with(partname, content_type, blob)
+        assert part == Part_.return_value
 
 
 class DescribeUnmarshaller(object):

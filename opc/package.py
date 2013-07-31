@@ -32,11 +32,21 @@ class OpcPackage(object):
         return pkg
 
 
+class Part(object):
+    """
+    Base class for package parts. Provides common properties and methods, but
+    intended to be subclassed in client code to implement specific part
+    behaviors.
+    """
+
+
 class PartFactory(object):
     """
     Provides a way for client code to specify a subclass of |Part| to be
     constructed by |Unmarshaller| based on its content type.
     """
+    def __new__(cls, partname, content_type, blob):
+        return Part(partname, content_type, blob)
 
 
 class Unmarshaller(object):
