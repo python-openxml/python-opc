@@ -12,7 +12,7 @@
 import hashlib
 
 from opc.packuri import PACKAGE_URI, PackURI
-from opc.phys_pkg import PhysPkgReader, ZipPkgReader
+from opc.phys_pkg import PhysPkgReader, PhysPkgWriter, ZipPkgReader
 
 import pytest
 
@@ -43,6 +43,22 @@ class DescribePhysPkgReader(object):
         # verify -----------------------
         ZipPkgReader_.assert_called_once_with(pkg_file)
         assert phys_pkg_reader == ZipPkgReader_.return_value
+
+
+class DescribePhysPkgWriter(object):
+
+    @pytest.fixture
+    def ZipPkgWriter_(self, request):
+        return class_mock('opc.phys_pkg.ZipPkgWriter', request)
+
+    def it_constructs_a_pkg_writer_instance(self, ZipPkgWriter_):
+        # mockery ----------------------
+        pkg_file = Mock(name='pkg_file')
+        # exercise ---------------------
+        phys_pkg_writer = PhysPkgWriter(pkg_file)
+        # verify -----------------------
+        ZipPkgWriter_.assert_called_once_with(pkg_file)
+        assert phys_pkg_writer == ZipPkgWriter_.return_value
 
 
 class DescribeZipPkgReader(object):

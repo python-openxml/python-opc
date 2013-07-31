@@ -26,6 +26,8 @@ class PhysPkgWriter(object):
     """
     Factory for physical package writer objects.
     """
+    def __new__(cls, pkg_file):
+        return ZipPkgWriter(pkg_file)
 
 
 class ZipPkgReader(object):
@@ -68,3 +70,9 @@ class ZipPkgReader(object):
         except KeyError:
             rels_xml = None
         return rels_xml
+
+
+class ZipPkgWriter(object):
+    """
+    Implements |PhysPkgWriter| interface for a zip file OPC package.
+    """
