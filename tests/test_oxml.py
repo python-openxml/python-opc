@@ -10,7 +10,10 @@
 """Test suite for opc.oxml module."""
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
-from opc.oxml import CT_Default, CT_Override, CT_Relationship, CT_Types
+from opc.oxml import (
+    CT_Default, CT_Override, CT_Relationship, CT_Relationships, CT_Types,
+    oxml_tostring
+)
 
 from .unitdata import a_Default, an_Override, a_Relationship, a_Types
 
@@ -66,6 +69,19 @@ class DescribeCT_Relationship(object):
                 builder = builder.with_target_mode(RTM.EXTERNAL)
             expected_rel_xml = builder.xml
             assert rel.xml == expected_rel_xml
+
+
+class DescribeCT_Relationships(object):
+
+    def it_can_construct_a_new_relationships_element(self):
+        rels = CT_Relationships.new()
+        actual_xml = oxml_tostring(rels, encoding='unicode',
+                                   pretty_print=True)
+        expected_xml = (
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package'
+            '/2006/relationships"/>\n'
+        )
+        assert actual_xml == expected_xml
 
 
 class DescribeCT_Types(object):

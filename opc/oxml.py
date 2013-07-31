@@ -199,6 +199,10 @@ class CT_Relationships(OxmlBaseElement):
         """
         Return a new ``<Relationships>`` element.
         """
+        xml = '<Relationships xmlns="%s"/>' % nsmap['pr']
+        relationships = oxml_fromstring(xml)
+        objectify.deannotate(relationships, cleanup_namespaces=True)
+        return relationships
 
 
 class CT_Types(OxmlBaseElement):
