@@ -107,12 +107,21 @@ class PartFactory(object):
         return Part(partname, content_type, blob)
 
 
+class _Relationship(object):
+    """
+    Value object for relationship to part.
+    """
+    def __init__(self, rId, reltype, target, baseURI, external=False):
+        super(_Relationship, self).__init__()
+
+
 class RelationshipCollection(object):
     """
     Collection object for |_Relationship| instances, having list semantics.
     """
     def __init__(self, baseURI):
         super(RelationshipCollection, self).__init__()
+        self._baseURI = baseURI
         self._rels = []
 
     def __getitem__(self, idx):
@@ -122,6 +131,14 @@ class RelationshipCollection(object):
     def __len__(self):
         """Implements len() built-in on this object"""
         return self._rels.__len__()
+
+    def add_relationship(self, reltype, target, rId, external=False):
+        """
+        Return a newly added |_Relationship| instance.
+        """
+        rel = _Relationship(rId, reltype, target, self._baseURI, external)
+        self._rels.append(rel)
+        return rel
 
 
 class Unmarshaller(object):

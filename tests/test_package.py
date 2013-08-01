@@ -111,6 +111,10 @@ class DescribePartFactory(object):
 
 class DescribeRelationshipCollection(object):
 
+    @pytest.fixture
+    def _Relationship_(self, request):
+        return class_mock('opc.package._Relationship', request)
+
     def it_has_a_len(self):
         rels = RelationshipCollection(None)
         assert len(rels) == 0
@@ -124,6 +128,17 @@ class DescribeRelationshipCollection(object):
             pytest.fail(msg)
         except IndexError:
             pass
+
+    def it_can_add_a_relationship(self, _Relationship_):
+        baseURI, rId, reltype, target, external = (
+            'baseURI', 'rId9', 'reltype', 'target', False
+        )
+        rels = RelationshipCollection(baseURI)
+        rel = rels.add_relationship(reltype, target, rId, external)
+        _Relationship_.assert_called_once_with(rId, reltype, target, baseURI,
+                                               external)
+        assert rels[0] == rel
+        assert rel == _Relationship_.return_value
 
 
 class DescribeUnmarshaller(object):
