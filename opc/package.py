@@ -115,6 +115,10 @@ class RelationshipCollection(object):
         super(RelationshipCollection, self).__init__()
         self._rels = []
 
+    def __getitem__(self, idx):
+        """Implements access by subscript, e.g. rels[9]"""
+        return self._rels.__getitem__(idx)
+
     def __len__(self):
         """Implements len() built-in on this object"""
         return self._rels.__len__()

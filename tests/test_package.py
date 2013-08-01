@@ -115,6 +115,16 @@ class DescribeRelationshipCollection(object):
         rels = RelationshipCollection(None)
         assert len(rels) == 0
 
+    def it_supports_indexed_access(self):
+        rels = RelationshipCollection(None)
+        try:
+            rels[0]
+        except TypeError:
+            msg = 'RelationshipCollection does not support indexed access'
+            pytest.fail(msg)
+        except IndexError:
+            pass
+
 
 class DescribeUnmarshaller(object):
 
