@@ -101,6 +101,25 @@ class _ContentTypeMap(object):
     Value type providing dictionary semantics for looking up content type by
     part name, e.g. ``content_type = cti['/ppt/presentation.xml']``.
     """
+    def __init__(self):
+        super(_ContentTypeMap, self).__init__()
+        self._overrides = dict()
+        self._defaults = dict()
+
+    def __getitem__(self, partname):
+        """
+        Return content type for part identified by *partname*.
+        """
+        if not isinstance(partname, PackURI):
+            tmpl = "_ContentTypeMap key must be <type 'PackURI'>, got %s"
+            raise KeyError(tmpl % type(partname))
+        if partname in self._overrides:
+            return self._overrides[partname]
+        if partname.ext in self._defaults:
+            return self._defaults[partname.ext]
+        tmpl = "no content type for partname '%s' in [Content_Types].xml"
+        raise KeyError(tmpl % partname)
+
     @staticmethod
     def from_xml(content_types_xml):
         """

@@ -14,6 +14,7 @@ import pytest
 from mock import call, Mock, patch
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
+from opc.packuri import PackURI
 from opc.phys_pkg import ZipPkgReader
 from opc.pkgreader import (
     _ContentTypeMap, PackageReader, _SerializedRelationship,
@@ -229,6 +230,33 @@ class Describe_ContentTypeMap(object):
         oxml_fromstring.assert_called_once_with(content_types_xml)
         assert ct_map._overrides == expected_overrides
         assert ct_map._defaults == expected_defaults
+
+    def it_matches_overrides(self):
+        # test data --------------------
+        partname = PackURI('/part/name1.xml')
+        content_type = 'app/vnd.type1'
+        # fixture ----------------------
+        ct_map = _ContentTypeMap()
+        ct_map._overrides = {partname: content_type}
+        # verify -----------------------
+        assert ct_map[partname] == content_type
+
+    def it_falls_back_to_defaults(self):
+        ct_map = _ContentTypeMap()
+        ct_map._overrides = {PackURI('/part/name1.xml'): 'app/vnd.type1'}
+        ct_map._defaults = {'.xml': 'application/xml'}
+        assert ct_map[PackURI('/part/name2.xml')] == 'application/xml'
+
+    def it_should_raise_on_partname_not_found(self):
+        ct_map = _ContentTypeMap()
+        with pytest.raises(KeyError):
+            ct_map[PackURI('/!blat/rhumba.1x&')]
+
+    def it_should_raise_on_key_not_instance_of_PackURI(self):
+        ct_map = _ContentTypeMap()
+        ct_map._overrides = {PackURI('/part/name1.xml'): 'app/vnd.type1'}
+        with pytest.raises(KeyError):
+            ct_map['/part/name1.xml']
 
 
 class Describe_SerializedRelationship(object):
