@@ -64,6 +64,7 @@ class Part(object):
         self._partname = partname
         self._content_type = content_type
         self._blob = blob
+        self._rels = RelationshipCollection(partname.baseURI)
 
     @property
     def blob(self):
@@ -86,6 +87,13 @@ class Part(object):
         |PackURI| instance containing partname for this part.
         """
         return self._partname
+
+    @property
+    def rels(self):
+        """
+        |RelationshipCollection| instance containing rels for this part.
+        """
+        return self._rels
 
     def _add_relationship(self, reltype, target, rId, external=False):
         """

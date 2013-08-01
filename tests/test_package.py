@@ -77,7 +77,8 @@ class DescribePart(object):
 
     @pytest.fixture
     def part(self):
-        return Part(None, None, None)
+        partname = Mock(name='partname', baseURI='/')
+        return Part(partname, None, None)
 
     def it_remembers_its_construction_state(self):
         partname, content_type, blob = (
@@ -88,6 +89,13 @@ class DescribePart(object):
         assert part.blob == blob
         assert part.content_type == content_type
         assert part.partname == partname
+
+    def it_has_a_rels_collection_it_initializes_on_construction(
+            self, RelationshipCollection_):
+        partname = Mock(name='partname', baseURI='/')
+        part = Part(partname, None, None)
+        RelationshipCollection_.assert_called_once_with('/')
+        assert part.rels == RelationshipCollection_.return_value
 
     def it_can_add_a_relationship_to_another_part(self, part):
         # mockery ----------------------
