@@ -149,9 +149,23 @@ class CT_Relationship(OxmlBaseElement):
         return self.get('TargetMode', RTM.INTERNAL)
 
 
+class CT_Types(OxmlBaseElement):
+    """
+    ``<Types>`` element, the container element for Default and Override
+    elements in [Content_Types].xml.
+    """
+    @property
+    def overrides(self):
+        try:
+            return self.Override[:]
+        except AttributeError:
+            return []
+
+
 ct_namespace = element_class_lookup.get_namespace(nsmap['ct'])
 ct_namespace['Default'] = CT_Default
 ct_namespace['Override'] = CT_Override
+ct_namespace['Types'] = CT_Types
 
 pr_namespace = element_class_lookup.get_namespace(nsmap['pr'])
 pr_namespace['Relationship'] = CT_Relationship

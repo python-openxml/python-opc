@@ -10,8 +10,9 @@
 """Test suite for opc.oxml module."""
 
 from opc.constants import RELATIONSHIP_TARGET_MODE as RTM
+from opc.oxml import CT_Override
 
-from .unitdata import a_Default, an_Override, a_Relationship
+from .unitdata import a_Default, an_Override, a_Relationship, a_Types
 
 
 class DescribeCT_Default(object):
@@ -38,3 +39,12 @@ class DescribeCT_Relationship(object):
         assert rel.reltype == 'ReLtYpE'
         assert rel.target_ref == 'docProps/core.xml'
         assert rel.target_mode == RTM.INTERNAL
+
+
+class DescribeCT_Types(object):
+
+    def it_provides_access_to_override_child_elements(self):
+        types = a_Types().element
+        assert len(types.overrides) == 3
+        for override in types.overrides:
+            assert isinstance(override, CT_Override)
