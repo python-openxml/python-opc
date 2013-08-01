@@ -46,6 +46,15 @@ class PackURI(str):
         return posixpath.split(self)[0]
 
     @property
+    def ext(self):
+        """
+        The extension portion of this pack URI, e.g. ``'.xml'`` for
+        ``'/ppt/slides/slide1.xml'``. Note that the period is included,
+        consistent with the behavior of :meth:`posixpath.ext`.
+        """
+        return posixpath.splitext(self)[1]
+
+    @property
     def filename(self):
         """
         The "filename" portion of this pack URI, e.g. ``'slide1.xml'`` for

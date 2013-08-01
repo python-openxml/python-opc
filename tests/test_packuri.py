@@ -47,6 +47,11 @@ class DescribePackURI(object):
         for pack_uri, expected_baseURI in self.cases(expected_values):
             assert pack_uri.baseURI == expected_baseURI
 
+    def it_can_calculate_extension(self):
+        expected_values = ('', '.xml', '.xml')
+        for pack_uri, expected_ext in self.cases(expected_values):
+            assert pack_uri.ext == expected_ext
+
     def it_can_calculate_filename(self):
         expected_values = ('', 'presentation.xml', 'slide1.xml')
         for pack_uri, expected_filename in self.cases(expected_values):
