@@ -12,6 +12,7 @@ Provides a low-level, read-only API to a serialized Open Packaging Convention
 (OPC) package.
 """
 
+from opc.oxml import oxml_fromstring
 from opc.packuri import PACKAGE_URI
 from opc.phys_pkg import PhysPkgReader
 
@@ -116,11 +117,23 @@ class _SerializedPart(object):
         super(_SerializedPart, self).__init__()
 
 
+class _SerializedRelationship(object):
+    """
+    Value object representing a serialized relationship in an OPC package.
+    Serialized, in this case, means any target part is referred to via its
+    partname rather than a direct link to an in-memory |Part| object.
+    """
+
+
 class _SerializedRelationshipCollection(object):
     """
     Read-only sequence of |_SerializedRelationship| instances corresponding
     to the relationships item XML passed to constructor.
     """
+    def __init__(self):
+        super(_SerializedRelationshipCollection, self).__init__()
+        self._srels = []
+
     @staticmethod
     def load_from_xml(baseURI, rels_item_xml):
         """
@@ -128,3 +141,9 @@ class _SerializedRelationshipCollection(object):
         relationships contained in *rels_item_xml*. Returns an empty
         collection if *rels_item_xml* is |None|.
         """
+        srels = _SerializedRelationshipCollection()
+        if rels_item_xml is not None:
+            rels_elm = oxml_fromstring(rels_item_xml)
+            for rel_elm in rels_elm.Relationship:
+                srels._srels.append(_SerializedRelationship(baseURI, rel_elm))
+        return srels

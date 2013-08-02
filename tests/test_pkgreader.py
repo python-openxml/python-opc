@@ -14,7 +14,9 @@ import pytest
 from mock import call, Mock, patch
 
 from opc.phys_pkg import ZipPkgReader
-from opc.pkgreader import _ContentTypeMap, PackageReader
+from opc.pkgreader import (
+    _ContentTypeMap, PackageReader, _SerializedRelationshipCollection
+)
 
 from .unitutil import class_mock, initializer_mock, method_mock
 
@@ -175,3 +177,36 @@ class DescribePackageReader(object):
         phys_reader.rels_xml_for.assert_called_once_with(source_uri)
         load_from_xml.assert_called_once_with(source_uri.baseURI, rels_xml)
         assert retval == srels
+
+
+class Describe_SerializedRelationshipCollection(object):
+
+    @pytest.fixture
+    def oxml_fromstring(self, request):
+        _patch = patch('opc.pkgreader.oxml_fromstring')
+        request.addfinalizer(_patch.stop)
+        return _patch.start()
+
+    @pytest.fixture
+    def _SerializedRelationship_(self, request):
+        return class_mock('opc.pkgreader._SerializedRelationship', request)
+
+    def it_can_load_from_xml(self, oxml_fromstring, _SerializedRelationship_):
+        # mockery ----------------------
+        baseURI, rels_item_xml, rel_elm_1, rel_elm_2 = (
+            Mock(name='baseURI'), Mock(name='rels_item_xml'),
+            Mock(name='rel_elm_1'), Mock(name='rel_elm_2'),
+        )
+        rels_elm = Mock(name='rels_elm', Relationship=[rel_elm_1, rel_elm_2])
+        oxml_fromstring.return_value = rels_elm
+        # exercise ---------------------
+        srels = _SerializedRelationshipCollection.load_from_xml(
+            baseURI, rels_item_xml)
+        # verify -----------------------
+        expected_calls = [
+            call(baseURI, rel_elm_1),
+            call(baseURI, rel_elm_2),
+        ]
+        oxml_fromstring.assert_called_once_with(rels_item_xml)
+        assert _SerializedRelationship_.call_args_list == expected_calls
+        assert isinstance(srels, _SerializedRelationshipCollection)
