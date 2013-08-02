@@ -45,3 +45,12 @@ class DescribeZipPkgReader(object):
         pkg_file = Mock(name='pkg_file')
         ZipPkgReader(pkg_file)
         ZipFile_.assert_called_once_with(pkg_file, 'r')
+
+    def it_can_be_closed(self, ZipFile_):
+        # mockery ----------------------
+        zipf = ZipFile_.return_value
+        zip_pkg_reader = ZipPkgReader(None)
+        # exercise ---------------------
+        zip_pkg_reader.close()
+        # verify -----------------------
+        zipf.close.assert_called_once_with()

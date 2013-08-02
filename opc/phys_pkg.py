@@ -34,6 +34,7 @@ class ZipPkgReader(object):
         """
         Close the zip archive, releasing any resources it is using.
         """
+        self._zipf.close()
 
     @property
     def content_types_xml(self):
