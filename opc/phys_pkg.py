@@ -11,6 +11,8 @@
 Provides a general interface to a *physical* OPC package, such as a zip file.
 """
 
+from zipfile import ZipFile
+
 
 class PhysPkgReader(object):
     """
@@ -26,6 +28,7 @@ class ZipPkgReader(object):
     """
     def __init__(self, pkg_file):
         super(ZipPkgReader, self).__init__()
+        self._zipf = ZipFile(pkg_file, 'r')
 
     def close(self):
         """

@@ -9,13 +9,18 @@
 
 """Test suite for opc.phys_pkg module."""
 
-from opc.phys_pkg import PhysPkgReader
+from opc.phys_pkg import PhysPkgReader, ZipPkgReader
 
 import pytest
 
 from mock import Mock
 
 from .unitutil import class_mock
+
+
+@pytest.fixture
+def ZipFile_(request):
+    return class_mock('opc.phys_pkg.ZipFile', request)
 
 
 class DescribePhysPkgReader(object):
@@ -32,3 +37,11 @@ class DescribePhysPkgReader(object):
         # verify -----------------------
         ZipPkgReader_.assert_called_once_with(pkg_file)
         assert phys_pkg_reader == ZipPkgReader_.return_value
+
+
+class DescribeZipPkgReader(object):
+
+    def it_opens_pkg_file_zip_on_construction(self, ZipFile_):
+        pkg_file = Mock(name='pkg_file')
+        ZipPkgReader(pkg_file)
+        ZipFile_.assert_called_once_with(pkg_file, 'r')
