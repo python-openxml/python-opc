@@ -44,3 +44,14 @@ class ZipPkgReader(object):
         Return the `[Content_Types].xml` blob from the zip package.
         """
         return self._zipf.read(self._CONTENT_TYPES_MEMBERNAME)
+
+    def rels_xml_for(self, source_uri):
+        """
+        Return rels item XML for source with *source_uri* or None if no rels
+        item is present.
+        """
+        try:
+            rels_xml = self._zipf.read(source_uri.rels_uri.membername)
+        except KeyError:
+            rels_xml = None
+        return rels_xml

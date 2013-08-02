@@ -11,6 +11,7 @@
 
 import hashlib
 
+from opc.packuri import PACKAGE_URI, PackURI
 from opc.phys_pkg import PhysPkgReader, ZipPkgReader
 
 import pytest
@@ -69,3 +70,13 @@ class DescribeZipPkgReader(object):
     def it_has_the_content_types_xml(self, phys_reader):
         sha1 = hashlib.sha1(phys_reader.content_types_xml).hexdigest()
         assert sha1 == '9604a4fb3bf9626f5ad59a4e82029b3a501f106a'
+
+    def it_can_retrieve_rels_xml_for_source_uri(self, phys_reader):
+        rels_xml = phys_reader.rels_xml_for(PACKAGE_URI)
+        sha1 = hashlib.sha1(rels_xml).hexdigest()
+        assert sha1 == 'e31451d4bbe7d24adbe21454b8e9fdae92f50de5'
+
+    def it_returns_none_when_part_has_no_rels_xml(self, phys_reader):
+        partname = PackURI('/ppt/viewProps.xml')
+        rels_xml = phys_reader.rels_xml_for(partname)
+        assert rels_xml is None
