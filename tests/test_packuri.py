@@ -32,6 +32,12 @@ class DescribePackURI(object):
         pack_uris = [PackURI(uri_str) for uri_str in uri_str_cases]
         return zip(pack_uris, expected_values)
 
+    def it_can_construct_from_relative_ref(self):
+        baseURI = '/ppt/slides'
+        relative_ref = '../slideLayouts/slideLayout1.xml'
+        pack_uri = PackURI.from_rel_ref(baseURI, relative_ref)
+        assert pack_uri == '/ppt/slideLayouts/slideLayout1.xml'
+
     def it_should_raise_on_construct_with_bad_pack_uri_str(self):
         with pytest.raises(ValueError):
             PackURI('foobar')

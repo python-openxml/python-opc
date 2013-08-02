@@ -26,6 +26,16 @@ class PackURI(str):
             raise ValueError(tmpl % pack_uri_str)
         return str.__new__(cls, pack_uri_str)
 
+    @staticmethod
+    def from_rel_ref(baseURI, relative_ref):
+        """
+        Return a |PackURI| instance containing the absolute pack URI formed by
+        translating *relative_ref* onto *baseURI*.
+        """
+        joined_uri = posixpath.join(baseURI, relative_ref)
+        abs_uri = posixpath.abspath(joined_uri)
+        return PackURI(abs_uri)
+
     @property
     def baseURI(self):
         """
