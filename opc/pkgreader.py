@@ -67,6 +67,9 @@ class PackageReader(object):
         Return |_SerializedRelationshipCollection| instance populated with
         relationships for source identified by *source_uri*.
         """
+        rels_xml = phys_reader.rels_xml_for(source_uri)
+        return _SerializedRelationshipCollection.load_from_xml(
+            source_uri.baseURI, rels_xml)
 
     @staticmethod
     def _walk_phys_parts(phys_reader, srels, visited_partnames=None):
@@ -111,3 +114,17 @@ class _SerializedPart(object):
     """
     def __init__(self, partname, content_type, blob, srels):
         super(_SerializedPart, self).__init__()
+
+
+class _SerializedRelationshipCollection(object):
+    """
+    Read-only sequence of |_SerializedRelationship| instances corresponding
+    to the relationships item XML passed to constructor.
+    """
+    @staticmethod
+    def load_from_xml(baseURI, rels_item_xml):
+        """
+        Return |_SerializedRelationshipCollection| instance loaded with the
+        relationships contained in *rels_item_xml*. Returns an empty
+        collection if *rels_item_xml* is |None|.
+        """

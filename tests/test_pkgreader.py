@@ -44,6 +44,11 @@ class DescribePackageReader(object):
         return class_mock('opc.pkgreader._SerializedPart', request)
 
     @pytest.fixture
+    def _SerializedRelationshipCollection_(self, request):
+        return class_mock('opc.pkgreader._SerializedRelationshipCollection',
+                          request)
+
+    @pytest.fixture
     def _srels_for(self, request):
         return method_mock(PackageReader, '_srels_for', request)
 
@@ -155,3 +160,18 @@ class DescribePackageReader(object):
             (partname_3, part_3_blob, part_3_srels),
         ]
         assert generated_tuples == expected_tuples
+
+    def it_can_retrieve_srels_for_a_source_uri(
+            self, _SerializedRelationshipCollection_):
+        # mockery ----------------------
+        phys_reader = Mock(name='phys_reader')
+        source_uri = Mock(name='source_uri')
+        rels_xml = phys_reader.rels_xml_for.return_value
+        load_from_xml = _SerializedRelationshipCollection_.load_from_xml
+        srels = load_from_xml.return_value
+        # exercise ---------------------
+        retval = PackageReader._srels_for(phys_reader, source_uri)
+        # verify -----------------------
+        phys_reader.rels_xml_for.assert_called_once_with(source_uri)
+        load_from_xml.assert_called_once_with(source_uri.baseURI, rels_xml)
+        assert retval == srels
