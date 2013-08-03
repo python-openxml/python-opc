@@ -23,6 +23,7 @@ class PackageReader(object):
     """
     def __init__(self, content_types, pkg_srels, sparts):
         super(PackageReader, self).__init__()
+        self._sparts = sparts
 
     @staticmethod
     def from_file(pkg_file):
@@ -36,6 +37,14 @@ class PackageReader(object):
                                                       content_types)
         phys_reader.close()
         return PackageReader(content_types, pkg_srels, sparts)
+
+    def iter_sparts(self):
+        """
+        Generate a 3-tuple `(partname, content_type, blob)` for each of the
+        serialized parts in the package.
+        """
+        for spart in self._sparts:
+            yield (spart.partname, spart.content_type, spart.blob)
 
     @staticmethod
     def _load_serialized_parts(phys_reader, pkg_srels, content_types):

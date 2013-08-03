@@ -62,3 +62,18 @@ class DescribePackageReader(object):
         phys_reader.close.assert_called_once_with()
         init.assert_called_once_with(content_types, pkg_srels, sparts)
         assert isinstance(pkg_reader, PackageReader)
+
+    def it_can_iterate_over_the_serialized_parts(self):
+        # mockery ----------------------
+        partname, content_type, blob = ('part/name.xml', 'app/vnd.type',
+                                        '<Part_1/>')
+        spart = Mock(name='spart', partname=partname,
+                     content_type=content_type, blob=blob)
+        pkg_reader = PackageReader(None, None, [spart])
+        iter_count = 0
+        # exercise ---------------------
+        for retval in pkg_reader.iter_sparts():
+            iter_count += 1
+        # verify -----------------------
+        assert retval == (partname, content_type, blob)
+        assert iter_count == 1
