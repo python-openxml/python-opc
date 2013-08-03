@@ -107,6 +107,15 @@ class _ContentTypeMap(object):
         Return a new |_ContentTypeMap| instance populated with the contents
         of *content_types_xml*.
         """
+        types_elm = oxml_fromstring(content_types_xml)
+        ctmap = _ContentTypeMap()
+        ctmap._overrides = dict(
+            (o.partname, o.content_type) for o in types_elm.overrides
+        )
+        ctmap._defaults = dict(
+            ('.%s' % d.extension, d.content_type) for d in types_elm.defaults
+        )
+        return ctmap
 
 
 class _SerializedPart(object):

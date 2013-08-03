@@ -23,6 +23,13 @@ from opc.pkgreader import (
 from .unitutil import class_mock, initializer_mock, method_mock
 
 
+@pytest.fixture
+def oxml_fromstring(request):
+    _patch = patch('opc.pkgreader.oxml_fromstring')
+    request.addfinalizer(_patch.stop)
+    return _patch.start()
+
+
 class DescribePackageReader(object):
 
     @pytest.fixture
@@ -179,6 +186,49 @@ class DescribePackageReader(object):
         phys_reader.rels_xml_for.assert_called_once_with(source_uri)
         load_from_xml.assert_called_once_with(source_uri.baseURI, rels_xml)
         assert retval == srels
+
+
+class Describe_ContentTypeMap(object):
+
+    def it_can_construct_from_types_xml(self, oxml_fromstring):
+        # test data --------------------
+        content_types = (
+            'app/vnd.type1', 'app/vnd.type2', 'app/vnd.type3',
+            'app/vnd.type4',
+        )
+        content_types_xml = '<DontCare/>'
+        extensions = ('rels', 'xml')
+        exts = tuple(['.%s' % extension for extension in extensions])
+        partnames = ('/part/name1.xml', '/part/name2.xml')
+        # mockery ----------------------
+        overrides = (
+            Mock(name='override_elm_1', partname=partnames[0],
+                 content_type=content_types[0]),
+            Mock(name='override_elm_2', partname=partnames[1],
+                 content_type=content_types[1]),
+        )
+        defaults = (
+            Mock(name='default_elm_1', extension=extensions[0],
+                 content_type=content_types[2]),
+            Mock(name='default_elm_2', extension=extensions[1],
+                 content_type=content_types[3]),
+        )
+        types_elm = Mock(
+            name='types_elm', overrides=overrides, defaults=defaults
+        )
+        oxml_fromstring.return_value = types_elm
+        # exercise ---------------------
+        ct_map = _ContentTypeMap.from_xml(content_types_xml)
+        # verify -----------------------
+        expected_overrides = {
+            partnames[0]: content_types[0], partnames[1]: content_types[1]
+        }
+        expected_defaults = {
+            exts[0]: content_types[2], exts[1]: content_types[3]
+        }
+        oxml_fromstring.assert_called_once_with(content_types_xml)
+        assert ct_map._overrides == expected_overrides
+        assert ct_map._defaults == expected_defaults
 
 
 class Describe_SerializedRelationship(object):
