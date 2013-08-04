@@ -152,6 +152,19 @@ class DescribeRelationshipCollection(object):
         except IndexError:
             pass
 
+    def it_has_dict_style_lookup_of_rel_by_rId(self):
+        rel = Mock(name='rel', rId='foobar')
+        rels = RelationshipCollection(None)
+        rels._rels.append(rel)
+        assert rels['foobar'] == rel
+
+    def it_should_raise_on_failed_lookup_by_rId(self):
+        rel = Mock(name='rel', rId='foobar')
+        rels = RelationshipCollection(None)
+        rels._rels.append(rel)
+        with pytest.raises(KeyError):
+            rels['barfoo']
+
     def it_can_add_a_relationship(self, _Relationship_):
         baseURI, rId, reltype, target, external = (
             'baseURI', 'rId9', 'reltype', 'target', False

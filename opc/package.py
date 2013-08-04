@@ -140,9 +140,18 @@ class RelationshipCollection(object):
         self._baseURI = baseURI
         self._rels = []
 
-    def __getitem__(self, idx):
-        """Implements access by subscript, e.g. rels[9]"""
-        return self._rels.__getitem__(idx)
+    def __getitem__(self, key):
+        """
+        Implements access by subscript, e.g. ``rels[9]``. It also implements
+        dict-style lookup of a relationship by rId, e.g. ``rels['rId1']``.
+        """
+        if isinstance(key, basestring):
+            for rel in self._rels:
+                if rel.rId == key:
+                    return rel
+            raise KeyError("no rId '%s' in RelationshipCollection" % key)
+        else:
+            return self._rels.__getitem__(key)
 
     def __len__(self):
         """Implements len() built-in on this object"""
