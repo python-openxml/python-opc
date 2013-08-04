@@ -11,6 +11,7 @@
 Provides an API for manipulating Open Packaging Convention (OPC) packages.
 """
 
+from opc.packuri import PACKAGE_URI
 from opc.pkgreader import PackageReader
 
 
@@ -20,6 +21,10 @@ class OpcPackage(object):
     the :meth:`open` class method with a path to a package file or file-like
     object containing one.
     """
+    def __init__(self):
+        super(OpcPackage, self).__init__()
+        self._rels = RelationshipCollection(PACKAGE_URI.baseURI)
+
     @staticmethod
     def open(pkg_file):
         """
@@ -30,6 +35,14 @@ class OpcPackage(object):
         pkg_reader = PackageReader.from_file(pkg_file)
         Unmarshaller.unmarshal(pkg_reader, pkg, PartFactory)
         return pkg
+
+    @property
+    def rels(self):
+        """
+        Return a reference to the |RelationshipCollection| holding the
+        relationships for this package.
+        """
+        return self._rels
 
 
 class Part(object):
@@ -84,6 +97,14 @@ class PartFactory(object):
     """
     def __new__(cls, partname, content_type, blob):
         return Part(partname, content_type, blob)
+
+
+class RelationshipCollection(object):
+    """
+    Collection object for |_Relationship| instances, having list semantics.
+    """
+    def __init__(self, baseURI):
+        super(RelationshipCollection, self).__init__()
 
 
 class Unmarshaller(object):

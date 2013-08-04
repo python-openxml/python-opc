@@ -14,8 +14,14 @@ import pytest
 from mock import call, Mock
 
 from opc.package import OpcPackage, Part, PartFactory, Unmarshaller
+from opc.packuri import PACKAGE_URI
 
 from .unitutil import class_mock, method_mock
+
+
+@pytest.fixture
+def RelationshipCollection_(request):
+    return class_mock('opc.package.RelationshipCollection', request)
 
 
 class DescribeOpcPackage(object):
@@ -44,6 +50,12 @@ class DescribeOpcPackage(object):
         Unmarshaller_.unmarshal.assert_called_once_with(pkg_reader, pkg,
                                                         PartFactory_)
         assert isinstance(pkg, OpcPackage)
+
+    def it_initializes_its_rels_collection_on_construction(
+            self, RelationshipCollection_):
+        pkg = OpcPackage()
+        RelationshipCollection_.assert_called_once_with(PACKAGE_URI.baseURI)
+        assert pkg.rels == RelationshipCollection_.return_value
 
 
 class DescribePart(object):
