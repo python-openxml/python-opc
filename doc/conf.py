@@ -71,6 +71,8 @@ rst_epilog = """
 
 .. |_Relationship| replace:: :class:`_Relationship`
 
+.. |RelationshipCollection| replace:: :class:`_RelationshipCollection`
+
 .. |po| replace:: ``python-opc``
 
 .. |python-opc| replace:: ``python-opc``

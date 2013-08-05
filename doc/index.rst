@@ -86,6 +86,8 @@ Contents
 ========
 
 .. toctree::
+   content_types
+   relationship_types
    developer/design_narratives
    :maxdepth: 2
 

@@ -18,6 +18,33 @@ xml_relpath = 'src_data/part-types.xml'
 xml_path = os.path.join(thisdir, xml_relpath)
 
 
+def content_types_documentation_page(xml_path):
+    """
+    Generate restructuredText (rst) documentation for content type constants.
+    """
+    print '###########################'
+    print 'Content type constant names'
+    print '###########################'
+    content_types = parse_content_types(xml_path)
+    for name in sorted(content_types.keys()):
+        print '\n%s' % name
+        print '    %s' % content_types[name]
+
+
+def relationship_types_documentation_page(xml_path):
+    """
+    Generate restructuredText (rst) documentation for relationship type
+    constants.
+    """
+    print '################################'
+    print 'Relationship type constant names'
+    print '################################'
+    relationship_types = parse_relationship_types(xml_path)
+    for name in sorted(relationship_types.keys()):
+        print '\n%s' % name
+        print '    \\%s' % relationship_types[name]
+
+
 def content_type_constant_names(xml_path):
     """
     Calculate constant names for content types in source XML document
@@ -174,3 +201,5 @@ def rel_type_camel_name(relationship_type):
 
 content_type_constant_names(xml_path)
 relationship_type_constant_names(xml_path)
+content_types_documentation_page(xml_path)
+relationship_types_documentation_page(xml_path)
