@@ -167,7 +167,12 @@ class PartFactory(object):
     Provides a way for client code to specify a subclass of |Part| to be
     constructed by |Unmarshaller| based on its content type.
     """
+    part_type_for = {}
+
     def __new__(cls, partname, content_type, blob):
+        if content_type in PartFactory.part_type_for:
+            CustomPartClass = PartFactory.part_type_for[content_type]
+            return CustomPartClass(partname, content_type, blob)
         return Part(partname, content_type, blob)
 
 

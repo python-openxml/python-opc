@@ -13,6 +13,7 @@ import pytest
 
 from mock import call, Mock, patch, PropertyMock
 
+from opc.constants import CONTENT_TYPE as CT
 from opc.oxml import CT_Relationships
 from opc.package import (
     OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
@@ -191,6 +192,18 @@ class DescribePartFactory(object):
         # verify -----------------------
         Part_.assert_called_once_with(partname, content_type, blob)
         assert part == Part_.return_value
+
+    def it_constructs_custom_part_type_for_registered_content_types(self):
+        # mockery ----------------------
+        CustomPartClass = Mock(name='CustomPartClass')
+        partname, blob = (Mock(name='partname'), Mock(name='blob'))
+        # exercise ---------------------
+        PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = CustomPartClass
+        part = PartFactory(partname, CT.WML_DOCUMENT_MAIN, blob)
+        # verify -----------------------
+        CustomPartClass.assert_called_once_with(partname,
+                                                CT.WML_DOCUMENT_MAIN, blob)
+        assert part is CustomPartClass.return_value
 
 
 class Describe_Relationship(object):
