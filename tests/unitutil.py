@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2013 Steve Canny scanny@cisco.com
 #
-# This module is part of python-pptx and is released under the MIT License:
+# This module is part of python-opc and is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
 
 """Utility functions for unit testing"""
