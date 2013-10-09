@@ -231,6 +231,10 @@ class CONTENT_TYPE(object):
     SML_SHEET = (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
+    SML_SHEET_MAIN = (
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.m'
+        'ain+xml'
+    )
     SML_SHEET_METADATA = (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMe'
         'tadata+xml'
@@ -246,6 +250,10 @@ class CONTENT_TYPE(object):
     SML_TABLE_SINGLE_CELLS = (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.tableSi'
         'ngleCells+xml'
+    )
+    SML_TEMPLATE_MAIN = (
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.templat'
+        'e.main+xml'
     )
     SML_USER_NAMES = (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.userNam'
@@ -333,11 +341,21 @@ class CONTENT_TYPE(object):
 
 class NAMESPACE(object):
     """Constant values for OPC XML namespaces"""
+    DML_WORDPROCESSING_DRAWING = (
+        'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDraw'
+        'ing'
+    )
+    OFC_RELATIONSHIPS = (
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    )
     OPC_RELATIONSHIPS = (
         'http://schemas.openxmlformats.org/package/2006/relationships'
     )
     OPC_CONTENT_TYPES = (
         'http://schemas.openxmlformats.org/package/2006/content-types'
+    )
+    WML_MAIN = (
+        'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
     )
 
 
