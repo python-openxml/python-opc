@@ -11,6 +11,7 @@
 Provides an API for manipulating Open Packaging Convention (OPC) packages.
 """
 
+from opc.constants import RELATIONSHIP_TYPE as RT
 from opc.oxml import CT_Relationships
 from opc.packuri import PACKAGE_URI
 from opc.pkgreader import PackageReader
@@ -26,6 +27,17 @@ class OpcPackage(object):
     def __init__(self):
         super(OpcPackage, self).__init__()
         self._rels = RelationshipCollection(PACKAGE_URI.baseURI)
+
+    @property
+    def main_document(self):
+        """
+        Return a reference to the main document part for this package.
+        Examples include a document part for a WordprocessingML package, a
+        presentation part for a PresentationML package, or a workbook part
+        for a SpreadsheetML package.
+        """
+        rel = self._rels.get_rel_of_type(RT.OFFICE_DOCUMENT)
+        return rel.target_part
 
     @staticmethod
     def open(pkg_file):
