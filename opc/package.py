@@ -172,7 +172,7 @@ class PartFactory(object):
     def __new__(cls, partname, content_type, blob):
         if content_type in PartFactory.part_type_for:
             CustomPartClass = PartFactory.part_type_for[content_type]
-            return CustomPartClass(partname, content_type, blob)
+            return CustomPartClass.load(partname, content_type, blob)
         return Part(partname, content_type, blob)
 
 
