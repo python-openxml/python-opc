@@ -97,7 +97,7 @@ class Part(object):
     intended to be subclassed in client code to implement specific part
     behaviors.
     """
-    def __init__(self, partname, content_type, blob):
+    def __init__(self, partname, content_type, blob=None):
         super(Part, self).__init__()
         self._partname = partname
         self._content_type = content_type
