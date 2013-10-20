@@ -5,10 +5,13 @@ python-opc
 VERSION: 0.0.1d (first development release)
 
 
-STATUS (as of June 23 2013)
-===========================
+STATUS (as of October 20 2013)
+==============================
 
 First development release. Under active development.
+
+WARNING:`spike` branch is SUBJECT TO FULL REBASING at any time. You probably
+don't want to base a pull request on it without asking first.
 
 
 Vision
