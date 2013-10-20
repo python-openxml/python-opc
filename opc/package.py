@@ -249,6 +249,21 @@ class RelationshipCollection(object):
         self._rels.append(rel)
         return rel
 
+    def get_rel_of_type(self, reltype):
+        """
+        Return single relationship of type *reltype* from the collection.
+        Raises |KeyError| if no matching relationship is found. Raises
+        |ValueError| if more than one matching relationship is found.
+        """
+        matching = [rel for rel in self._rels if rel.reltype == reltype]
+        if len(matching) == 0:
+            tmpl = "no relationship of type '%s' in collection"
+            raise KeyError(tmpl % reltype)
+        if len(matching) > 1:
+            tmpl = "multiple relationships of type '%s' in collection"
+            raise ValueError(tmpl % reltype)
+        return matching[0]
+
     @property
     def xml(self):
         """
