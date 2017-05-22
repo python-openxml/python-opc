@@ -5,14 +5,15 @@ python-opc
 VERSION: 0.0.1d (first development release)
 
 
-STATUS (as of October 20 2013)
+STATUS (as of May 22 2017)
 ==============================
+
+May 2017 update:  In process of refactoring and integrating changes from the python-pptx library.
 
 First development release. Under active development.
 
 WARNING:`spike` branch is SUBJECT TO FULL REBASING at any time. You probably
 don't want to base a pull request on it without asking first.
-
 
 Vision
 ======
