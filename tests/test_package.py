@@ -201,9 +201,9 @@ class DescribePartFactory(object):
         PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = CustomPartClass
         part = PartFactory(partname, CT.WML_DOCUMENT_MAIN, blob)
         # verify -----------------------
-        CustomPartClass.assert_called_once_with(partname,
+        CustomPartClass.load.assert_called_once_with(partname,
                                                 CT.WML_DOCUMENT_MAIN, blob)
-        assert part is CustomPartClass.return_value
+        assert part is CustomPartClass.load.return_value
 
 
 class Describe_Relationship(object):
